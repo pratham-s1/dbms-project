@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 
 let connection = await mysql.createConnection({
   host: process.env.MYSQL_HOST ?? "localhost",
-  user: process.env.MYSQL_USER,
+  user: process.env.MYSQL_USERNAME,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
 });
@@ -22,12 +22,19 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/:table_name", async (req, res) => {
-  const { table_name } = req.params;
-  const [results, fields] = await connection.query(
-    `SELECT * FROM ${table_name};`
-  );
+  try {
+    const { table_name } = req.params;
+    console.log(table_name);
 
-  return res.status(200).json({ results });
+    const [results, fields] = await connection.query(
+      `SELECT * FROM ${table_name};`
+    );
+
+    return res.status(200).json({ results });
+  } catch (error) {
+    console.log("ERROR AAYA");
+    return res.status(500).json({ error });
+  }
 });
 
 app.listen(port, () => {
