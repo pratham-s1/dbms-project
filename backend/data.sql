@@ -264,14 +264,15 @@ CREATE TABLE
         FOREIGN KEY (train_id) REFERENCES Trains (train_id)
     );
 
-NSERT INTO Train_Coaches (
-    coach_id,
-    train_id,
-    total_seats,
-    available_seats,
-    status,
-    price
-)
+INSERT INTO
+    Train_Coaches (
+        coach_id,
+        train_id,
+        total_seats,
+        available_seats,
+        status,
+        price
+    )
 VALUES
     (4001, 3001, 50, 50, 'Available', 30.00),
     (4002, 3002, 40, 40, 'Available', 35.00),

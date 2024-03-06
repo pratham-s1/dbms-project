@@ -1,95 +1,60 @@
+"use client";
 import Image from "next/image";
 import styles from "./page.module.css";
+import { Table } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import { getTableData } from "./services/table.service";
 
 export default function Home() {
+  const columns = [
+    {
+      title: "userid",
+      dataIndex: "user_id",
+      key: "user_id",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+  ];
+
+  // const dataSource = [
+  //   {
+  //     key: "1",
+  //     name: "Mike",
+  //     age: 32,
+  //     address: "10 Downing Street",
+  //   },
+  //   {
+  //     key: "2",
+  //     name: "John",
+  //     age: 42,
+  //     address: "10 Downing Street",
+  //   },
+  // ];
+  const fetchServices = async () => {
+    // Ensure getTableData is an async function or returns a promise
+    return await getTableData({ tableName: "Users" });
+  };
+  const { data, isLoading } = useQuery({
+    queryKey: ["fetchServices"],
+    queryFn: fetchServices,
+  });
+  console.log({ data });
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Railway Management Portal
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-          app/page.js
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
       <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+        <Table dataSource={data} columns={columns} />
       </div>
     </main>
   );
