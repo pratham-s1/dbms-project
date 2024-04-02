@@ -56,7 +56,7 @@ CREATE TABLE
 
 CREATE TABLE
     Station (
-        station_id VARCHAR(20) PRIMARY KEY AUTO_INCREMENT,
+        station_id VARCHAR(20) PRIMARY KEY,
         station_name VARCHAR(255),
         city VARCHAR(255)
     );
