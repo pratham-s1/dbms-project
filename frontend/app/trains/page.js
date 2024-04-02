@@ -5,16 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getTableData } from "@/app/services/table.service";
 
 export default function About() {
-  // created_at: "2024-03-06T00:04:10.000Z";
-  // date: "2024-03-09T18:30:00.000Z";
-  // end_destination: "City B";
-  // end_time: "12:00:00";
-  // start_source: "City A";
-  // start_time: "08:00:00";
-  // status: "Scheduled";
-  // train_id: 3001;
-  // train_name: "Express Train 1";
-
   const columns = [
     {
       title: "trainid",
@@ -97,9 +87,13 @@ export default function About() {
           padding: "2rem",
         }}
       >
-        <h1 style={{
-          marginBottom: "1rem"
-        }}>Train Schedule</h1>
+        <h1
+          style={{
+            marginBottom: "1rem",
+          }}
+        >
+          Train Schedule
+        </h1>
         <Table
           dataSource={data}
           columns={columns}
