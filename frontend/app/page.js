@@ -25,7 +25,7 @@ export default function Register() {
         message: "Success",
         description: "User registered successfully",
       });
-      router.push("/trains");
+      router.push("/login");
     } catch (error) {
       notification.error({
         message: "Error",

@@ -69,12 +69,11 @@ export default function About() {
           onChange={handleTableChange}
           defaultValue={selectedTable}
         >
-          <Option value="Train">Trains</Option>
-          <Option value="User">Users</Option>
+          <Option value="Train">Train</Option>
+          <Option value="User">User</Option>
           <Option value="Ticket">Tickets</Option>
           <Option value="Station">Station</Option>
           <Option value="Schedule">Schedule</Option>
-          <Option value="Station">Station</Option>
           <Option value="Payment">Payment</Option>
           <Option value="Passenger">Passenger</Option>
           <Option value="Seat">Seat</Option>
