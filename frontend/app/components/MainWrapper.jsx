@@ -3,7 +3,12 @@ import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { BookOutlined, HomeOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  BookOutlined,
+  HomeOutlined,
+  SearchOutlined,
+  LoginOutlined,
+} from "@ant-design/icons";
 
 import { Menu, Layout } from "antd";
 const { Header, Footer } = Layout;
@@ -21,6 +26,8 @@ export default function MainWrapper({ children }) {
       return "2";
     } else if (path === "/admin") {
       return "3";
+    } else if (path === "/login"){
+      return "0";
     }
   };
 
@@ -40,6 +47,15 @@ export default function MainWrapper({ children }) {
               mode="horizontal"
               defaultSelectedKeys={[defaultKey()]}
               items={[
+                {
+                  key: "0",
+                  icon: <LoginOutlined />,
+                  label: "Login",
+                  onClick: (e) => {
+                    console.log("clicked");
+                    router.push("/login");
+                  },
+                },
                 {
                   key: "1",
                   icon: <HomeOutlined />,

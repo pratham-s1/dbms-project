@@ -67,13 +67,17 @@ export default function About() {
         <Select
           style={{ width: 120, marginBottom: "1rem" }}
           onChange={handleTableChange}
-          defaultValue={selectedTable} 
+          defaultValue={selectedTable}
         >
           <Option value="Train">Trains</Option>
           <Option value="User">Users</Option>
           <Option value="Ticket">Tickets</Option>
           <Option value="Station">Station</Option>
           <Option value="Schedule">Schedule</Option>
+          <Option value="Station">Station</Option>
+          <Option value="Payment">Payment</Option>
+          <Option value="Passenger">Passenger</Option>
+          <Option value="Seat">Seat</Option>
 
           {/* Add more options based on your tables */}
         </Select>
