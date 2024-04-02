@@ -17,9 +17,9 @@ const queryClient = new QueryClient();
 
 export default function MainWrapper({ children }) {
   const router = useRouter();
-  console.log(router.pathname);
+  const path = usePathname();
+
   const defaultKey = () => {
-    const path = usePathname();
     if (path === "/") {
       return "1";
     } else if (path === "/trains") {
