@@ -1,347 +1,162 @@
-CREATE TABLE
-    Users (
+CREATE TABLE User (
         user_id INT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        sex ENUM ('M', 'F', 'Other') NOT NULL,
-        phone VARCHAR(20),
-        dob DATE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        is_admin BOOLEAN DEFAULT FALSE
+        user_name VARCHAR(255) NOT NULL,
+        user_email VARCHAR(255) UNIQUE NOT NULL,
+        user_password VARCHAR(255) NOT NULL,
+        user_sex ENUM ('Male', 'Female', 'Other') NOT NULL,
+        user_phone VARCHAR(20),
+        user_dob DATE,
+        user_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        user_is_admin BOOLEAN DEFAULT FALSE
     );
 
-INSERT INTO
-    Users (
-        user_id,
-        name,
-        email,
-        password,
-        sex,
-        phone,
-        dob,
-        is_admin
-    )
+
+CREATE TABLE Train (
+    train_id INT PRIMARY KEY,
+    train_name VARCHAR(255),
+    source VARCHAR(255),
+    destination VARCHAR(255),
+    start_time TIME,
+    end_time TIME,
+    status ENUM('Scheduled', 'Delayed', 'Cancelled', 'Completed'),
+    total_seats INT
+);
+
+
+CREATE TABLE Payment (
+    payment_id INT PRIMARY KEY,
+    status ENUM('Pending', 'Completed', 'Failed'),
+    price DECIMAL(10, 2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE Seat (
+    seat_id INT PRIMARY KEY,
+    train_id INT,
+    type VARCHAR(50),
+    price DECIMAL(10, 2),
+    FOREIGN KEY (train_id) REFERENCES Train(train_id)
+);
+
+
+CREATE TABLE Ticket (
+    ticket_id INT PRIMARY KEY,
+    user_id INT,
+    payment_id INT,
+    seat_id INT,
+    food_preference VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('Pending', 'Confirmed', 'Cancelled'),
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
+    FOREIGN KEY (seat_id) REFERENCES Seat(seat_id)
+);
+
+
+CREATE TABLE Station (
+    station_id VARCHAR(20) PRIMARY KEY,
+    station_name VARCHAR(255),
+    city VARCHAR(255)
+);
+
+
+CREATE TABLE Passenger (
+    user_id INT,
+    passenger_id INT,
+    passenger_name VARCHAR(255),
+    passenger_email VARCHAR(255),
+    passenger_sex ENUM('Male', 'Female', 'Other'),
+    passenger_phone VARCHAR(20),
+    passenger_dob DATE,
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    PRIMARY KEY (user_id, passenger_id)
+);
+
+
+CREATE TABLE Schedule (
+    train_id INT,
+    station_id VARCHAR(20),
+    platform VARCHAR(50),
+    arrival_time TIME,
+    departure_time TIME,
+    PRIMARY KEY (train_id, station_id),
+    FOREIGN KEY (train_id) REFERENCES Train(train_id),
+    FOREIGN KEY (station_id) REFERENCES Station(station_id)
+);
+
+
+
+
+
+INSERT INTO User (user_id, user_name, user_email, user_password, user_sex, user_phone, user_dob)
 VALUES
-    (
-        1001,
-        'John Doe',
-        'john@example.com',
-        'password123',
-        'M',
-        '+1234567890',
-        '1990-05-15',
-        FALSE
-    ),
-    (
-        1002,
-        'Jane Smith',
-        'jane@example.com',
-        'securepass',
-        'F',
-        '+9876543210',
-        '1985-08-22',
-        FALSE
-    ),
-    (
-        1003,
-        'Alex Johnson',
-        'alex@example.com',
-        'pass123',
-        'M',
-        '+1122334455',
-        '1995-11-30',
-        FALSE
-    ),
-    (
-        1004,
-        'Emma White',
-        'emma@example.com',
-        'mysecretpass',
-        'F',
-        '+9988776655',
-        '1992-04-10',
-        FALSE
-    ),
-    (
-        1005,
-        'Sam Taylor',
-        'sam@example.com',
-        'strongpass',
-        'Other',
-        '+7766554433',
-        '1988-12-05',
-        TRUE
-    );
+(1001, 'Akash Sharma', 'akash.sharma@gmail.com', 'password123', 'Male', '9876543210', '1990-05-15'),
+(1002, 'Priya Patel', 'priya.patel@gmail.com', 'securepass', 'Female', '8765432109', '1988-09-20'),
+(1003, 'Rahul Singh', 'rahul.singh@gmail.com', 'strongpwd', 'Male', '7654321098', '1995-12-10'),
+(1004, 'Neha Gupta', 'neha.gupta@gmail.com', 'password321', 'Female', '6543210987', '1992-03-25'),
+(1005, 'Anjali Khanna', 'anjali.khanna@gmail.com', 'password456', 'Female', '5432109876', '1987-07-18'),
+(1006, 'Vikram Joshi', 'vikram.joshi@gmail.com', 'newpass123', 'Male', '4321098765', '1991-10-30'),
+(1007, 'Deepika Sharma', 'deepika.sharma@gmail.com', 'secretpass123', 'Female', '3210987654', '1986-02-08');
 
-CREATE TABLE
-    Passenger (
-        passenger_id INT PRIMARY KEY,
-        user_id INT NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        dob DATE,
-        sex ENUM ('M', 'F', 'Other'),
-        FOREIGN KEY (user_id) REFERENCES Users (user_id)
-    );
-
-INSERT INTO
-    Passenger (passenger_id, user_id, name, dob, sex)
+INSERT INTO Train (train_id, train_name, source, destination, start_time, end_time, status, total_seats)
 VALUES
-    (2001, 1001, 'Passenger 1', '1992-03-20', 'M'),
-    (2002, 1002, 'Passenger 2', '1988-07-12', 'F'),
-    (2003, 1003, 'Passenger 3', '1995-11-05', 'Other'),
-    (2004, 1004, 'Passenger 4', '1990-09-18', 'M'),
-    (2005, 1005, 'Passenger 5', '1983-04-25', 'F');
+(1, 'Rajdhani Express', 'New Delhi', 'Mumbai', '09:00:00', '18:00:00', 'Scheduled', 300),
+(2, 'Shatabdi Express', 'Kolkata', 'Chennai', '08:30:00', '17:30:00', 'Scheduled', 250),
+(3, 'Duronto Express', 'Mumbai', 'Pune', '10:00:00', '12:00:00', 'Scheduled', 200),
+(4, 'Garib Rath Express', 'Jaipur', 'Ahmedabad', '07:00:00', '14:00:00', 'Scheduled', 350),
+(5, 'Rajdhani Express', 'Mumbai', 'Delhi', '10:30:00', '19:30:00', 'Scheduled', 320);
 
-CREATE TABLE
-    Trains (
-        train_id INT PRIMARY KEY,
-        train_name VARCHAR(255) NOT NULL,
-        start_source VARCHAR(255) NOT NULL,
-        end_destination VARCHAR(255) NOT NULL,
-        date DATE NOT NULL,
-        start_time TIME NOT NULL,
-        end_time TIME NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        status ENUM ('Scheduled', 'Cancelled', 'Delayed') NOT NULL
-    );
-
-INSERT INTO
-    Trains (
-        train_id,
-        train_name,
-        start_source,
-        end_destination,
-        date,
-        start_time,
-        end_time,
-        status
-    )
+INSERT INTO Payment (payment_id, status, price)
 VALUES
-    (
-        3001,
-        'Express Train 1',
-        'City A',
-        'City B',
-        '2024-03-10',
-        '08:00:00',
-        '12:00:00',
-        'Scheduled'
-    ),
-    (
-        3002,
-        'Express Train 2',
-        'City B',
-        'City C',
-        '2024-03-11',
-        '10:30:00',
-        '14:30:00',
-        'Scheduled'
-    ),
-    (
-        3003,
-        'Local Train 1',
-        'City C',
-        'City D',
-        '2024-03-12',
-        '15:45:00',
-        '18:30:00',
-        'Scheduled'
-    ),
-    (
-        3004,
-        'Express Train 3',
-        'City D',
-        'City E',
-        '2024-03-13',
-        '09:15:00',
-        '13:00:00',
-        'Scheduled'
-    ),
-    (
-        3005,
-        'Local Train 2',
-        'City E',
-        'City F',
-        '2024-03-14',
-        '13:30:00',
-        '16:45:00',
-        'Scheduled'
-    );
+(5501, 'Pending', 25.00),
+(5502, 'Completed', 50.50),
+(5503, 'Failed', 30.25),
+(5504, 'Completed', 45.75),
+(5505, 'Pending', 20.00);
 
-CREATE TABLE
-    Train_Stations (
-        station_id INT AUTO_INCREMENT PRIMARY KEY,
-        train_id INT NOT NULL,
-        station_name VARCHAR(255) NOT NULL,
-        platform VARCHAR(20) NOT NULL,
-        arrival_time TIME,
-        departure_time TIME,
-        source VARCHAR(255) NOT NULL,
-        destination VARCHAR(255) NOT NULL,
-        status ENUM ('Active', 'Inactive'),
-        FOREIGN KEY (train_id) REFERENCES Trains (train_id)
-    );
-
-INSERT INTO
-    Train_Stations (
-        station_id,
-        train_id,
-        station_name,
-        platform,
-        arrival_time,
-        departure_time,
-        source,
-        destination,
-        status
-    )
+INSERT INTO Seat (seat_id, train_id, type, price)
 VALUES
-    (
-        7001,
-        3001,
-        'Station A',
-        'Platform 1',
-        '08:00:00',
-        '08:15:00',
-        'City A',
-        'City B',
-        'Active'
-    ),
-    (
-        7002,
-        3002,
-        'Station B',
-        'Platform 2',
-        '10:30:00',
-        '10:45:00',
-        'City B',
-        'City C',
-        'Active'
-    ),
-    (
-        7003,
-        3003,
-        'Station C',
-        'Platform 3',
-        '15:45:00',
-        '16:00:00',
-        'City C',
-        'City D',
-        'Active'
-    ),
-    (
-        7004,
-        3004,
-        'Station D',
-        'Platform 4',
-        '09:15:00',
-        '09:30:00',
-        'City D',
-        'City E',
-        'Active'
-    ),
-    (
-        7005,
-        3005,
-        'Station E',
-        'Platform 5',
-        '13:30:00',
-        '13:45:00',
-        'City E',
-        'City F',
-        'Active'
-    );
+(101, 1, 'AC', 100.00),
+(202, 2, 'AC', 120.00),
+(303, 3, 'NAC', 80.00),
+(404, 4, 'NAC', 90.00),
+(505, 5, 'AC', 110.00);
 
-CREATE TABLE
-    Train_Coaches (
-        coach_id INT AUTO_INCREMENT PRIMARY KEY,
-        train_id INT NOT NULL,
-        total_seats INT NOT NULL,
-        available_seats INT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        status ENUM ('Available', 'Full'),
-        price DECIMAL(10, 2) NOT NULL,
-        FOREIGN KEY (train_id) REFERENCES Trains (train_id)
-    );
-
-INSERT INTO
-    Train_Coaches (
-        coach_id,
-        train_id,
-        total_seats,
-        available_seats,
-        status,
-        price
-    )
+INSERT INTO Ticket (ticket_id, user_id, payment_id, seat_id, food_preference, status)
 VALUES
-    (4001, 3001, 50, 50, 'Available', 30.00),
-    (4002, 3002, 40, 40, 'Available', 35.00),
-    (4003, 3003, 60, 60, 'Available', 25.00),
-    (4004, 3004, 45, 45, 'Available', 40.00),
-    (4005, 3005, 55, 55, 'Available', 28.00);
+(00001, 1001, 5501, 101, 'Vegetarian', 'Confirmed'),
+(00002, 1002, 5502, 202, 'Non-Vegetarian', 'Confirmed'),
+(00003, 1003, 5503, 303, 'Vegetarian', 'Pending'),
+(00004, 1004, 5504, 404, 'Non-Vegetarian', 'Confirmed'),
+(00005, 1005, 5505, 505, 'Vegetarian', 'Cancelled');
 
-CREATE TABLE
-    Tickets (
-        ticket_id INT PRIMARY KEY,
-        passenger_id INT NOT NULL,
-        train_id INT NOT NULL,
-        coach_id INT NOT NULL,
-        seat_id INT NOT NULL,
-        food_preference ENUM ('Veg', 'Non-Veg', 'Vegan') NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        is_cancelled BOOLEAN DEFAULT FALSE,
-        status ENUM ('Confirmed', 'Cancelled', 'Pending'),
-        FOREIGN KEY (passenger_id) REFERENCES Passenger (passenger_id),
-        FOREIGN KEY (train_id) REFERENCES Trains (train_id),
-        FOREIGN KEY (coach_id) REFERENCES Train_Coaches (coach_id)
-    );
-
-INSERT INTO
-    Tickets (
-        ticket_id,
-        passenger_id,
-        train_id,
-        coach_id,
-        seat_id,
-        food_preference,
-        status
-    )
+INSERT INTO Station (station_id, station_name, city)
 VALUES
-    (5001, 2001, 3001, 4001, 1, 'Veg', 'Confirmed'),
-    (5002, 2002, 3002, 4002, 2, 'Non-Veg', 'Confirmed'),
-    (5003, 2003, 3003, 4003, 3, 'Vegan', 'Pending'),
-    (5004, 2004, 3004, 4004, 4, 'Non-Veg', 'Confirmed'),
-    (5005, 2005, 3005, 4005, 5, 'Veg', 'Confirmed');
+('S1', 'New Delhi Railway Station', 'New Delhi'),
+('S2', 'Howrah Junction', 'Kolkata'),
+('S3', 'Mumbai Central', 'Mumbai'),
+('S4', 'Chennai Central', 'Chennai'),
+('S5', 'Pune Junction', 'Pune'),
+('S6', 'Jaipur Junction', 'Jaipur'),
+('S7', 'Ahmedabad Junction', 'Ahmedabad'),
+('S8', 'Hyderabad Deccan', 'Hyderabad');
 
-CREATE TABLE
-    Payment (
-        payment_id INT PRIMARY KEY,
-        ticket_id INT NOT NULL,
-        user_id INT NOT NULL,
-        coach_id INT NOT NULL,
-        train_id INT NOT NULL,
-        price DECIMAL(10, 2) NOT NULL,
-        status ENUM ('Paid', 'Pending', 'Refunded'),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (ticket_id) REFERENCES Tickets (ticket_id),
-        FOREIGN KEY (user_id) REFERENCES Users (user_id),
-        FOREIGN KEY (coach_id) REFERENCES Train_Coaches (coach_id),
-        FOREIGN KEY (train_id) REFERENCES Trains (train_id)
-    );
-
-INSERT INTO
-    Payment (
-        payment_id,
-        ticket_id,
-        user_id,
-        coach_id,
-        train_id,
-        price,
-        status
-    )
+INSERT INTO Schedule (train_id, station_id, platform, arrival_time, departure_time)
 VALUES
-    (6001, 5001, 1001, 4001, 3001, 30.00, 'Paid'),
-    (6002, 5002, 1002, 4002, 3002, 35.00, 'Paid'),
-    (6003, 5003, 1003, 4003, 3003, 25.00, 'Pending'),
-    (6004, 5004, 1004, 4004, 3004, 40.00, 'Paid'),
-    (6005, 5005, 1005, 4005, 3005, 28.00, 'Paid');
+(1, 'S1', 'Platform 1', '09:00:00', '09:10:00'),
+(1, 'S2', 'Platform 2', '12:30:00', '12:40:00'),
+(1, 'S3', 'Platform 3', '16:00:00', '16:10:00'),
+(2, 'S2', 'Platform 1', '08:00:00', '08:10:00'),
+(2, 'S4', 'Platform 2', '11:30:00', '11:40:00');
+
+INSERT INTO Passenger (user_id, passenger_id, passenger_name, passenger_email, passenger_sex, passenger_phone, passenger_dob)
+VALUES
+(1001, 2001, 'Ramesh Kumar', 'ramesh.kumar@gmail.com', 'Male', '+91 9876543210', '1985-08-15'),
+(1001, 2002, 'Sunita Devi', 'sunita.devi@gmail.com', 'Female', '+91 8765432109', '1990-09-20'),
+(1002, 2003, 'Amit Singh', 'amit.singh@gmail.com', 'Male', '+91 7654321098', '1988-04-10'),
+(1003, 2004, 'Priya Sharma', 'priya.sharma@gmail.com', 'Female', '+91 6543210987', '1992-03-25'),
+(1004, 2005, 'Deepak Patel', 'deepak.patel@gmail.com', 'Male', '+91 5432109876', '1987-07-18'),
+(1005, 2006, 'Neha Gupta', 'neha.gupta@gmail.com', 'Female', '+91 4321098765', '1991-10-30'),
+(1006, 2007, 'Vikas Verma', 'vikas.verma@gmail.com', 'Male', '+91 3210987654', '1986-02-08'),
+(1006, 2008, 'Ritu Singh', 'ritu.singh@gmail.com', 'Female', '+91 2109876543', '1995-12-10');
