@@ -8,7 +8,7 @@ import { getTableData } from "@/app/services/table.service";
 const { Option } = Select;
 
 export default function About() {
-  const [selectedTable, setSelectedTable] = useState("Trains");
+  const [selectedTable, setSelectedTable] = useState("Train");
   const [columns, setColumns] = useState([]);
   const [data, setData] = useState([]);
 
@@ -69,9 +69,12 @@ export default function About() {
           onChange={handleTableChange}
           defaultValue={selectedTable} 
         >
-          <Option value="Trains">Trains</Option>
-          <Option value="Users">Users</Option>
-          <Option value="Tickets">Tickets</Option>
+          <Option value="Train">Trains</Option>
+          <Option value="User">Users</Option>
+          <Option value="Ticket">Tickets</Option>
+          <Option value="Station">Station</Option>
+          <Option value="Schedule">Schedule</Option>
+
           {/* Add more options based on your tables */}
         </Select>
         <Table

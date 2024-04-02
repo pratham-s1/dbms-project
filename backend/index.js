@@ -53,8 +53,15 @@ app.get("/:table_name", async (req, res) => {
 
 app.post("/register", async (req, res) => {
   try {
-    const { name, email, dob, password, phone, sex } = req.body;
-    const dobDate = new Date(dob);
+    const {
+      user_name,
+      user_email,
+      user_dob,
+      user_password,
+      user_phone,
+      user_sex,
+    } = req.body;
+    const dobDate = new Date(user_dob);
     const month = dobDate.getMonth() + 1;
     const year = dobDate.getFullYear();
     const date = dobDate.getDate();
@@ -62,7 +69,7 @@ app.post("/register", async (req, res) => {
     const today = new Date();
     const createdAt = today.toISOString().slice(0, 19).replace("T", " ");
 
-    const query = `INSERT INTO Users VALUES('${name}','${email}','${password}','${sex}','${phone}','${year}-${date}-${month}','${createdAt}',0);`;
+    const query = `INSERT INTO User VALUES('${user_name}','${user_email}','${user_password}','${user_sex}','${user_phone}','${year}/${date}/${month}','${createdAt}',0);`;
     console.log(query);
     const [results, fields] = await connection.query(query);
 
