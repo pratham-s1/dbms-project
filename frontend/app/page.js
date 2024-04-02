@@ -1,43 +1,14 @@
 "use client";
-import Image from "next/image";
-import styles from "./page.module.css";
-import { Table } from "antd";
-import { useQuery } from "@tanstack/react-query";
+
 import { getTableData } from "./services/table.service";
+import { useQuery } from "@tanstack/react-query";
+import { Form, Input, Select, Layout, Menu, Button, DatePicker } from "antd";
+const {Content} = Layout;
 
 export default function Home() {
-  const columns = [
-    {
-      title: "userid",
-      dataIndex: "user_id",
-      key: "user_id",
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-  ];
 
-  // const dataSource = [
-  //   {
-  //     key: "1",
-  //     name: "Mike",
-  //     age: 32,
-  //     address: "10 Downing Street",
-  //   },
-  //   {
-  //     key: "2",
-  //     name: "John",
-  //     age: 42,
-  //     address: "10 Downing Street",
-  //   },
-  // ];
+  const router=  useRouter();
+
   const fetchServices = async () => {
     // Ensure getTableData is an async function or returns a promise
     return await getTableData({ tableName: "Users" });
@@ -52,10 +23,72 @@ export default function Home() {
   }
 
   return (
-    <main className={styles.main}>
-      <div className={styles.grid}>
-        <Table dataSource={data} columns={columns} />
-      </div>
-    </main>
+    
+      <Content
+        style={{
+          padding: "0 48px",
+        }}
+      >
+        <Layout
+          style={{
+            padding: "24px 0",
+          }}
+        >
+          <Content
+            style={{
+              padding: "12px 24px",
+              minHeight: 280,
+            }}
+          >
+            <h1>Book Trains</h1>
+            <p>Search for running trains for travelling to your destination</p>
+
+            <Form
+              layout={"vertical"}
+              variant="filled"
+              style={{ maxWidth: 600 }}
+            >
+              <Form.Item
+                label="Input"
+                name="Input"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="Select"
+                name="Select"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <Select />
+              </Form.Item>
+
+              <Form.Item
+                label="DatePicker"
+                name="DatePicker"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <DatePicker />
+              </Form.Item>
+
+              <Form.Item
+                label="DatePicker"
+                name="DatePicker"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <DatePicker />
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+            </Form>
+          </Content>
+        </Layout>
+      </Content>
+     
   );
 }
