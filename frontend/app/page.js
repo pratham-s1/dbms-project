@@ -14,7 +14,7 @@ export default function Home() {
     // Ensure getTableData is an async function or returns a promise
     return await getTableData({ tableName: "Users" });
   };
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({  
     queryKey: ["fetchServices"],
     queryFn: fetchServices,
   });
