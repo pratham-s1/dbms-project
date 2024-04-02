@@ -1,80 +1,50 @@
 "use client";
 import styles from "@/app/page.module.css";
-import { Table } from "antd";
+import { Table, Select } from "antd";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getTableData } from "@/app/services/table.service";
 
-export default function About() {
-  const columns = [
-    {
-      title: "trainid",
-      dataIndex: "train_id",
-      key: "train_id",
-    },
-    {
-      title: "Name",
-      dataIndex: "train_name",
-      key: "train_name",
-    },
-    {
-      title: "Start Source",
-      dataIndex: "start_source",
-      key: "start_source",
-    },
-    {
-      title: "End Destination",
-      dataIndex: "end_destination",
-      key: "end_destination",
-    },
-    {
-      title: "Start Time",
-      dataIndex: "start_time",
-      key: "start_time",
-    },
-    {
-      title: "End Time",
-      dataIndex: "end_time",
-      key: "end_time",
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
-      title: "Created At",
-      dataIndex: "created_at",
-      key: "created_at",
-    },
-  ];
+const { Option } = Select;
 
-  // const dataSource = [
-  //   {
-  //     key: "1",
-  //     name: "Mike",
-  //     age: 32,
-  //     address: "10 Downing Street",
-  //   },
-  //   {
-  //     key: "2",
-  //     name: "John",
-  //     age: 42,
-  //     address: "10 Downing Street",
-  //   },
-  // ];
-  const fetchServices = async () => {
-    // Ensure getTableData is an async function or returns a promise
-    return await getTableData({ tableName: "Trains" });
+export default function About() {
+  const [selectedTable, setSelectedTable] = useState("Trains");
+  const [columns, setColumns] = useState([]);
+  const [data, setData] = useState([]);
+
+  const generateColumnsFromData = (data) => {
+    console.log({ lol: data });
+    if (!data || data.length === 0) return;
+
+    // Assuming all items have the same keys
+    const firstItemKeys = Object.keys(data[0]);
+    console.log(firstItemKeys);
+    const generatedColumns = firstItemKeys.map((key) => ({
+      title: key
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (letter) => letter.toUpperCase()), // Convert snake_case to Title Case
+      dataIndex: key,
+      key: key,
+    }));
+
+    setColumns(generatedColumns);
   };
-  const { data, isLoading } = useQuery({
-    queryKey: ["fetchServices"],
+
+  const fetchServices = async () => {
+    const res = await getTableData({ tableName: selectedTable });
+    setData(res);
+    generateColumnsFromData(res);
+  };
+
+  const { isLoading } = useQuery({
+    queryKey: ["fetchServices", selectedTable], // Include selectedTable in the query key
     queryFn: fetchServices,
   });
+
+  const handleTableChange = (value) => {
+    setSelectedTable(value);
+  };
+
   console.log({ data });
   if (isLoading) {
     return <div>Loading...</div>;
@@ -94,6 +64,16 @@ export default function About() {
         >
           Train Schedule
         </h1>
+        <Select
+          style={{ width: 120, marginBottom: "1rem" }}
+          onChange={handleTableChange}
+          defaultValue={selectedTable} 
+        >
+          <Option value="Trains">Trains</Option>
+          <Option value="Users">Users</Option>
+          <Option value="Tickets">Tickets</Option>
+          {/* Add more options based on your tables */}
+        </Select>
         <Table
           dataSource={data}
           columns={columns}
