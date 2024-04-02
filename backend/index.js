@@ -51,6 +51,34 @@ app.get("/:table_name", async (req, res) => {
   }
 });
 
+
+app.post("/register", async (req, res) => {
+  try {
+    const { name,email,dob,password,phone,sex } = req.body;
+    const dobDate = new Date(dob);
+    const month = dobDate.getMonth() + 1;
+    const year = dobDate.getFullYear();
+    const date = dobDate.getDate();
+
+    
+    const today = new Date();
+    const createdAt = today.toISOString().slice(0, 19).replace('T', ' ');
+
+    const query = 
+    `INSERT INTO Users VALUES(2004,'${name}','${email}','${password}','${sex}','${phone}','${year}/${date}/${month}','${createdAt}',0);`;
+    console.log(query)
+    const [results, fields] = await connection.query(query
+    );
+
+    return res.status(200).json({ results });
+  } catch (error) {
+    console.log(error)
+    console.log("ERROR AAYA");
+    return res.status(500).json({ error });
+  }
+});
+
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
