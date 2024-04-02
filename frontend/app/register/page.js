@@ -1,8 +1,9 @@
 "use client";
 
-import { getTableData } from "./services/table.service";
+import { getTableData, registeruser } from "@/app/services/table.service";
 import { useQuery } from "@tanstack/react-query";
-import { Form, Input, Select, Layout, Menu, Button, DatePicker } from "antd";
+import { Form, Input, Select, Layout, Menu, Button, DatePicker, } from "antd";
+import Password from "antd/es/input/Password";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
 
@@ -19,8 +20,10 @@ export default function Login() {
   });
   console.log({ data });
 
-  const onFormSubmit = (values) => {
+  const onFormSubmit = async(values) => {
     console.log(values);
+    const res=await registeruser(values)
+    console.log(res)
   };
 
   if (isLoading) {
@@ -44,7 +47,7 @@ export default function Login() {
             minHeight: 280,
           }}
         >
-          <h1>Book Trains</h1>
+          <h1>Register</h1>
           <p>Search for running trains for travelling to your destination</p>
 
           <Form
@@ -54,36 +57,61 @@ export default function Login() {
             onFinish={onFormSubmit}
           >
             <Form.Item
-              label="Input"
-              name="Input"
+              label="Name"
+              name="name"
               rules={[{ required: true, message: "Please input!" }]}
             >
               <Input />
             </Form.Item>
 
             <Form.Item
-              label="Select"
-              name="Select"
+              label="Email"
+              name="email"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <Select />
+              <Input />
             </Form.Item>
 
             <Form.Item
-              label="DatePicker"
-              name="DatePicker"
+              label="Password"
+              name="password"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <DatePicker />
+              <Input type="password"/>
             </Form.Item>
 
             <Form.Item
-              label="DatePicker"
-              name="DatePicker"
+              label="Sex"
+              name="sex"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <DatePicker />
+             <Select>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+              <option value="O">Other</option>
+              </Select>
             </Form.Item>
+
+
+            <Form.Item
+              label="Phone no."
+              name="phone"
+              rules={[{ required: true, message: "Please input!" }]}
+            >
+              <Input type="number" />
+            </Form.Item>
+
+            <Form.Item
+              label="Date of Birth"
+              name="dob"
+              rules={[{ required: true, message: "Please input!" }]}
+            >
+              <DatePicker/>
+            </Form.Item>
+
+
+
+            
 
             <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
               <Button type="primary" htmlType="submit">
