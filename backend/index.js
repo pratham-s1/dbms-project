@@ -117,6 +117,36 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.post("/forgot", async (req, res) => {
+  try {
+    const { user_email, user_password } = req.body;
+    if (!user_email || !user_password) {
+      return res.status(400).json({ error: "Email and new password are required" });
+    }
+
+    // Hash the new password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(user_password, saltRounds);
+
+    // Update the user's password in the database
+    const query = `UPDATE User SET user_password = '${hashedPassword}' WHERE user_email = '${user_email}';`;
+    const [results] = await connection.query(query);
+
+    // Check if the user's password was updated
+    if (results.affectedRows === 0) {
+      // No user found with the provided email
+      return res.status(404).json({ error: "User not found" });
+    } else {
+      // Password updated successfully
+      return res.status(200).json({ success: true, message: "Password updated successfully" });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "An error occurred during the password update process" });
+  }
+});
+
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { loginuser } from "@/app/services/table.service";
+import { forgot } from "@/app/services/table.service";
 import { Form, Input, Layout, Button, notification } from "antd";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
@@ -11,13 +11,13 @@ export default function Login() {
   const onFormSubmit = async (values) => {
     try {
       console.log(values);
-      const res = await loginuser(values);
+      const res = await forgot(values);
       console.log(res);
       notification.success({
-        message: "Success",
-        description: "User loggedin successfully",
+        message: "Password reset successfully!",
+        description: "Login again",
       });
-      router.push("/trains");
+      router.push("/login");
     } catch (error) {
       notification.error({
         message: "Error",
@@ -45,14 +45,14 @@ export default function Login() {
             minHeight: 280,
           }}
         >
-          <h1>Login</h1>
+          <h1>Forgot Password?</h1>
           <p
             style={{
               marginTop: "0.4rem",
               marginBottom: "1rem",
             }}
           >
-            Start Booking after logging in!{" "}
+            Have your password reset
           </p>
 
           <Form
@@ -70,7 +70,7 @@ export default function Login() {
             </Form.Item>
 
             <Form.Item
-              label="Password"
+              label="New Password"
               name="user_password"
               rules={[{ required: true, message: "Please input!" }]}
             >
@@ -79,15 +79,9 @@ export default function Login() {
 
             <Form.Item wrapperCol={{ span: 16 }}>
               <Button type="primary" htmlType="submit">
-                Login!
+                Reset!
               </Button>
             </Form.Item>
-            <Button danger
-              onClick={()=>{
-                router.push("/forgot")
-              }}
-            
-            >Forgot Password</Button>
           </Form>
         </Content>
       </Layout>

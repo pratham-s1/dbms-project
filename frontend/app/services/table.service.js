@@ -16,3 +16,10 @@ export const loginuser = async (data) => {
   console.log(res.data);
   return res.data?.results;
 };
+
+
+export const forgot = async (data) => {
+  const res = await axios.post(`http://localhost:8080/forgot`, data);
+  console.log(res.data);
+  return res.data?.results;
+};
