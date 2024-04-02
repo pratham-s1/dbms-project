@@ -32,10 +32,10 @@ export default function MainWrapper({ children }) {
                 {
                   key: "1",
                   icon: <HomeOutlined />,
-                  label: "Dashboard",
+                  label: "Register",
                   onClick: (e) => {
                     console.log("clicked");
-                    router.push("/dashboard");
+                    router.push("/register");
                   },
                 },
                 {

@@ -10,15 +10,6 @@ import { useRouter } from "next/navigation";
 export default function Login() {
   const router = useRouter();
 
-  const fetchServices = async () => {
-    // Ensure getTableData is an async function or returns a promise
-    return await getTableData({ tableName: "Users" });
-  };
-  const { data, isLoading } = useQuery({
-    queryKey: ["fetchServices"],
-    queryFn: fetchServices,
-  });
-  console.log({ data });
 
   const onFormSubmit = async(values) => {
     console.log(values);
@@ -26,9 +17,7 @@ export default function Login() {
     console.log(res)
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+ 
 
   return (
     <Content
