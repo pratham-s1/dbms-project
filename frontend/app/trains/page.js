@@ -1,89 +1,116 @@
 "use client";
-import styles from "@/app/page.module.css";
-import { Table, Select } from "antd";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getTableData } from "@/app/services/table.service";
 
-const { Option } = Select;
+import { registeruser } from "@/app/services/table.service";
+import {
+  Form,
+  Input,
+  Select,
+  Layout,
+  Button,
+  DatePicker,
+  notification,
+} from "antd";
+const { Content } = Layout;
+import { useRouter } from "next/navigation";
 
-export default function About() {
-  const [selectedTable, setSelectedTable] = useState("Train");
-  const [columns, setColumns] = useState([]);
-  const [data, setData] = useState([]);
+export default function Login() {
+  const router = useRouter();
 
-  const generateColumnsFromData = (data) => {
-    console.log({ lol: data });
-    if (!data || data.length === 0) return;
+  const onFormSubmit = async (values) => {
+    try {
+      console.log(values);
+      const res = await registeruser(values);
+      console.log(res);
+      notification.success({
+        message: "Success",
+        description: "User registered successfully",
+      });
+      router.push("/admin");
+    } catch (error) {
+      notification.error({
+        message: "Error",
+        description: JSON.stringify(error),
+      });
 
-    // Assuming all items have the same keys
-    const firstItemKeys = Object.keys(data[0]);
-    console.log(firstItemKeys);
-    const generatedColumns = firstItemKeys.map((key) => ({
-      title: key
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (letter) => letter.toUpperCase()), // Convert snake_case to Title Case
-      dataIndex: key,
-      key: key,
-    }));
-
-    setColumns(generatedColumns);
+      console.log(error);
+    }
   };
-
-  const fetchServices = async () => {
-    const res = await getTableData({ tableName: selectedTable });
-    setData(res);
-    generateColumnsFromData(res);
-  };
-
-  const { isLoading } = useQuery({
-    queryKey: ["fetchServices", selectedTable], // Include selectedTable in the query key
-    queryFn: fetchServices,
-  });
-
-  const handleTableChange = (value) => {
-    setSelectedTable(value);
-  };
-
-  console.log({ data });
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
-    <main className={styles.main}>
-      <div
+    <Content
+      style={{
+        padding: "0 48px",
+      }}
+    >
+      <Layout
         style={{
-          padding: "2rem",
+          padding: "24px 0",
         }}
       >
-        <h1
+        <Content
           style={{
-            marginBottom: "1rem",
+            padding: "12px 24px",
+            minHeight: 280,
           }}
         >
-          Train Schedule
-        </h1>
-        <Select
-          style={{ width: 120, marginBottom: "1rem" }}
-          onChange={handleTableChange}
-          defaultValue={selectedTable} 
-        >
-          <Option value="Train">Trains</Option>
-          <Option value="User">Users</Option>
-          <Option value="Ticket">Tickets</Option>
-          <Option value="Station">Station</Option>
-          <Option value="Schedule">Schedule</Option>
+          <h1>Search Trains</h1>
+          <p
+            style={{
+              marginTop: "0.4rem",
+              marginBottom: "1rem",
+            }}
+          >
+            Search for running trains for travelling to your destination
+          </p>
 
-          {/* Add more options based on your tables */}
-        </Select>
-        <Table
-          dataSource={data}
-          columns={columns}
-          bordered
-          scroll={{ x: 965 }}
-        />
-      </div>
-    </main>
+          <Form
+            layout={"vertical"}
+            variant="filled"
+            style={{ maxWidth: 600 }}
+            onFinish={onFormSubmit}
+          >
+   
+            <Form.Item
+              label="Source"
+              name="source"
+              rules={[{ required: true, message: "Please input!" }]}
+            >
+              <Select placeholder={"Select source"}>
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              label="Destination"
+              name="destination"
+              rules={[{ required: true, message: "Please input!" }]}
+            >
+              <Select placeholder={"Select destination"}>
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+                label="Date of Travel"
+                name="user_dob"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+              <DatePicker />
+            </Form.Item>
+
+
+            <Form.Item wrapperCol={{ span: 16 }}>
+              <Button type="primary" htmlType="submit">
+                Search for Trains
+              </Button>
+            </Form.Item>
+          </Form>
+        </Content>
+      </Layout>
+    </Content>
   );
 }

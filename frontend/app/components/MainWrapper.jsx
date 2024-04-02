@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { BookOutlined, HomeOutlined, SearchOutlined } from "@ant-design/icons";
@@ -12,6 +12,17 @@ const queryClient = new QueryClient();
 
 export default function MainWrapper({ children }) {
   const router = useRouter();
+  console.log(router.pathname);
+  const defaultKey = () => {
+    const path = usePathname();
+    if (path === "/") {
+      return "1";
+    } else if (path === "/trains") {
+      return "2";
+    } else if (path === "/admin") {
+      return "3";
+    }
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -27,7 +38,7 @@ export default function MainWrapper({ children }) {
             <Menu
               theme="dark"
               mode="horizontal"
-              defaultSelectedKeys={["2"]}
+              defaultSelectedKeys={[defaultKey()]}
               items={[
                 {
                   key: "1",
@@ -35,7 +46,7 @@ export default function MainWrapper({ children }) {
                   label: "Register",
                   onClick: (e) => {
                     console.log("clicked");
-                    router.push("/register");
+                    router.push("/");
                   },
                 },
                 {
@@ -44,16 +55,16 @@ export default function MainWrapper({ children }) {
                   label: "Book Trains",
                   onClick: (e) => {
                     console.log("clicked");
-                    router.push("/");
+                    router.push("/trains");
                   },
                 },
                 {
                   key: "3",
                   icon: <SearchOutlined />,
-                  label: "View All Trains",
+                  label: "Admin",
                   onClick: (e) => {
                     console.log("clicked");
-                    router.push("/trains");
+                    router.push("/admin");
                   },
                 },
               ]}
