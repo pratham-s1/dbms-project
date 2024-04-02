@@ -92,8 +92,20 @@ export default function About() {
 
   return (
     <main className={styles.main}>
-      <div className={styles.grid}>
-        <Table dataSource={data} columns={columns} />
+      <div
+        style={{
+          padding: "2rem",
+        }}
+      >
+        <h1 style={{
+          marginBottom: "1rem"
+        }}>Train Schedule</h1>
+        <Table
+          dataSource={data}
+          columns={columns}
+          bordered
+          scroll={{ x: 965 }}
+        />
       </div>
     </main>
   );
