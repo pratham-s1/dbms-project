@@ -10,33 +10,6 @@ export default function Home() {
 
   const router=  useRouter();
 
-<<<<<<< HEAD
-  const fetchServices = async () => {
-    // Ensure getTableData is an async function or returns a promise
-    return await getTableData({ tableName: "Users" });
-  };
-  const { data, isLoading } = useQuery({  
-    queryKey: ["fetchServices"],
-    queryFn: fetchServices,
-  });
-  console.log({ data });
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-=======
-  // const fetchServices = async () => {
-  //   // Ensure getTableData is an async function or returns a promise
-  //   return await getTableData({ tableName: "Users" });
-  // };
-  // const { data, isLoading } = useQuery({
-  //   queryKey: ["fetchServices"],
-  //   queryFn: fetchServices,
-  // });
-  // console.log({ data });
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
->>>>>>> 48b56a9 (register edit)
 
   return (
     
