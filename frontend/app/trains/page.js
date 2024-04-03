@@ -14,6 +14,7 @@ import {
 } from "antd";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
 
 export default function Login() {
   const [data, setData] = useState([]);
@@ -126,7 +127,9 @@ export default function Login() {
                 name="user_dob"
                 rules={[{ required: true, message: "Please input!" }]}
               >
-              <DatePicker />
+              <DatePicker 
+                minDate={dayjs()}
+              />
             </Form.Item>
 
 
