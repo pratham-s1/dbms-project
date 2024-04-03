@@ -26,3 +26,10 @@ export const forgot = async (data) => {
   console.log(res.data);
   return res.data?.results;
 };
+
+
+export const search = async (data) => {
+  const res = await axios.post(`${BASE_URL}/search`, data);
+  console.log(res.data);
+  return res.data?.results;
+};

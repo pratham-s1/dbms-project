@@ -1,6 +1,7 @@
 "use client";
 
-import { registeruser } from "@/app/services/table.service";
+import { search } from "@/app/services/table.service";
+import {useState}from "react";
 import {
   Form,
   Input,
@@ -9,23 +10,48 @@ import {
   Button,
   DatePicker,
   notification,
+  Table
 } from "antd";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const [data, setData] = useState([]);
+  const [columns, setColumns] = useState([]);
   const router = useRouter();
+
+
+  const generateColumnsFromData = (data) => {
+    console.log({ lol: data });
+    if (!data || data.length === 0) return;
+
+    // Assuming all items have the same keys
+    const firstItemKeys = Object.keys(data[0]);
+    console.log(firstItemKeys);
+    const generatedColumns = firstItemKeys.map((key) => ({
+      title: key
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (letter) => letter.toUpperCase()), // Convert snake_case to Title Case
+      dataIndex: key,
+      key: key,
+    }));
+
+    setColumns(generatedColumns);
+  };
+
 
   const onFormSubmit = async (values) => {
     try {
       console.log(values);
-      const res = await registeruser(values);
+      const res = await search(values);
       console.log(res);
+
+      setData(res);
+      generateColumnsFromData(res);
       notification.success({
         message: "Success",
-        description: "User registered successfully",
+        description: "Trains found",
       });
-      router.push("/admin");
     } catch (error) {
       notification.error({
         message: "Error",
@@ -35,6 +61,7 @@ export default function Login() {
       console.log(error);
     }
   };
+
 
   return (
     <Content
@@ -109,6 +136,15 @@ export default function Login() {
               </Button>
             </Form.Item>
           </Form>
+
+          {data && (
+                    <Table
+          dataSource={data}
+          columns={columns}
+          bordered
+          scroll={{ x: 965 }}
+        />
+          )}
         </Content>
       </Layout>
     </Content>

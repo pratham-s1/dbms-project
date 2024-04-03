@@ -154,6 +154,19 @@ app.post("/forgot", async (req, res) => {
   }
 });
 
+app.post("/search", async (req, res) => {
+  try {
+    const { source, destination } = req.body;
+    const query = `SELECT * FROM Train where source='${source}' and destination='${destination}';`;
+    const [results, fields] = await connection.query(query);
+
+    return res.status(200).json({ results });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "An error occurred during the search process" });
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
