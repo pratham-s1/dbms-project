@@ -68,11 +68,19 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(user_password, saltRounds);
 
     const dobDate = new Date(user_dob);
+    
+    // dob should not be greater than today
+    if (dobDate > new Date()) {
+      return res.status(400).json({ error: "Date of birth should not be greater than today" });
+    }
+
     const month = dobDate.getMonth() + 1;
     const year = dobDate.getFullYear();
     const date = dobDate.getDate();
     const today = new Date();
     const createdAt = today.toISOString().slice(0, 19).replace("T", " ");
+
+
 
     const query = `INSERT INTO User(user_name, user_email, user_password, user_sex, user_phone, user_dob, user_created_at, user_is_admin) VALUES('${user_name}','${user_email}','${hashedPassword}','${user_sex}','${user_phone}','${year}-${month}-${date}','${createdAt}',0);`;
     const [results, fields] = await connection.query(query);

@@ -10,6 +10,7 @@ import {
   DatePicker,
   notification,
 } from "antd";
+import dayjs from "dayjs";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
 
@@ -98,7 +99,11 @@ export default function Register() {
               name="user_dob"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <DatePicker />
+              <DatePicker
+                maxDate={ 
+                  dayjs().subtract(1, "day")
+                }
+              />
             </Form.Item>
 
             <Form.Item
