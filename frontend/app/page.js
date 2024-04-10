@@ -127,7 +127,7 @@ export default function Register() {
             </Form.Item>
 
             <Form.Item wrapperCol={{ span: 16 }}>
-              <Button type="primary" htmlType="submit">
+              <Button type="dashed" htmlType="submit">
                 Start Booking!
               </Button>
             </Form.Item>
