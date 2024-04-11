@@ -32,19 +32,33 @@ export default function Landing() {
             <h1>Railway Reservation and Management Portal</h1>
   
             <Form
-              layout={"horizontal"}
+              layout={"inline"}
               variant="filled"
               style={{ maxWidth: 600 }}
               onFinish={onFormSubmit}
             >
               <Form.Item wrapperCol={{ span: 16 }}>
-                <Button type="primary" shape="round" htmlType="submit">
+                <Button type="primary" shape="round" htmlType="submit"
+                onClick={()=>{
+                  router.push("/forgot")
+                }}>
                   Register as new user
                 </Button>
               </Form.Item>
               <Form.Item wrapperCol={{ span: 16 }}>
-                <Button type="primary" shape="round" htmlType="submit">
+                <Button type="primary" shape="round" htmlType="submit"
+                onClick={()=>{
+                  router.push("/login")
+                }}>
                   Login as registered user
+                </Button>
+              </Form.Item>
+              <Form.Item wrapperCol={{ span: 16 }}>
+                <Button type="primary" shape="round" htmlType="submit"
+                onClick={()=>{
+                  router.push("/trains")
+                }}>
+                  Check train status!
                 </Button>
               </Form.Item>
             </Form>
