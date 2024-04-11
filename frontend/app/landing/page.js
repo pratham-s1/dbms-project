@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Add this directive to convert the component to a Client Component
 
 import { useRouter } from "next/navigation";
 import { Form, Input, Layout, Button, notification } from "antd";
@@ -6,7 +6,11 @@ const { Content } = Layout;
 
 export default function Landing() {
     const router = useRouter();
-  
+
+    const onFormSubmit = (values) => {
+        // Handle form submission logic here
+        console.log('Form submitted with values:', values);
+    };
 
     return (
       <Content
@@ -26,13 +30,6 @@ export default function Landing() {
             }}
           >
             <h1>Railway Reservation and Management Portal</h1>
-            {/* <p
-              style={{
-                marginTop: "0.4rem",
-                marginBottom: "1rem",
-              }}
-            >
-            </p> */}
   
             <Form
               layout={"horizontal"}
@@ -55,4 +52,4 @@ export default function Landing() {
         </Layout>
       </Content>
     );
-  }
+}

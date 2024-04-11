@@ -26,6 +26,9 @@ export default function MainWrapper({ children }) {
       return "2";
     } else if (path === "/admin") {
       return "3";
+    }
+    else if (path === "/landing") {
+      return "4";
     } else if (path === "/login"){
       return "0";
     }
@@ -81,6 +84,15 @@ export default function MainWrapper({ children }) {
                   onClick: (e) => {
                     console.log("clicked");
                     router.push("/admin");
+                  },
+                },
+                {
+                  key: "4",
+                  icon: <HomeOutlined />,
+                  label: "Landing",
+                  onClick: (e) => {
+                    console.log("clicked");
+                    router.push("/landing");
                   },
                 },
               ]}
