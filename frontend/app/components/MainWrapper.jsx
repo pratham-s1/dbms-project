@@ -38,12 +38,10 @@ export default function MainWrapper({ children }) {
     <QueryClientProvider client={queryClient}>
       <AntdRegistry>
         <Layout>
-         
           <Header
             style={{
               display: "flex",
               alignItems: "center",
-              
             }}
           >
             <div className="demo-logo" />
@@ -104,12 +102,18 @@ export default function MainWrapper({ children }) {
               }}
             />
           </Header>
-
-          {children}
+          <div
+            style={{
+              height: "100%",
+            }}
+          >
+            {children}
+          </div>
           <Footer
             style={{
               textAlign: "center",
-              backgroundColor:  "#141414",
+              backgroundColor: "#111111",
+              color: "#fff",
             }}
           >
             Railway Reservation & Management Portal ©{new Date().getFullYear()}
