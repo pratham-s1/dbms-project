@@ -9,6 +9,8 @@ import {
   Button,
   DatePicker,
   notification,
+  Row,
+  Col,
 } from "antd";
 import dayjs from "dayjs";
 const { Content } = Layout;
@@ -40,116 +42,164 @@ export default function Register() {
   return (
     <Content
       style={{
-        padding: "0 48px",
-        backgroundColor:  "#141414",
+        padding: "0",
       }}
     >
       <Layout
         style={{
-          padding: "24px 0",
-          backgroundColor:  "#141414",
+          backgroundColor: "#111111",
+          padding: 0,
         }}
       >
         <Content
           style={{
-            padding: "12px 24px",
             minHeight: 280,
-            backgroundColor:  "#141414",
+            display: "flex",
+            justifyContent: "flex-start",
           }}
         >
-          <div
-        style={{
-          width: "100%",
-          maxWidth: 600,
-          padding: 24,
-          borderRadius: 8,
-          border: "1px solid #d9d9d9",
-          background: "#1e1e1e",
-          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-          backgroundColor:  "#E4E1D6",
-        }}
-      >
-          <h1>Register</h1>
-          <p
+          <Row
             style={{
-              marginTop: "0.4rem",
-              marginBottom: "1rem",
+              width: "100%",
             }}
           >
-            Search for running trains for travelling to your destination
-          </p>
-
-          <Form
-            layout={"vertical"}
-            variant="filled"
-            style={{ maxWidth: 600 }}
-            onFinish={onFormSubmit}
-          >
-            <Form.Item
-              label="Name"
-              name="user_name"
-              rules={[{ required: true, message: "Please input!" }]}
+            <Col
+              xs={24}
+              md={12}
+              lg={12}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
             >
-              <Input placeholder={"Name"} />
-            </Form.Item>
-
-            <Form.Item
-              label="Email"
-              name="user_email"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <Input placeholder={"Email"} />
-            </Form.Item>
-
-            <Form.Item
-              label="Password"
-              name="user_password"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <Input type="password" placeholder={"Password"} />
-            </Form.Item>
-
-            <Form.Item
-              label="Date of Birth"
-              name="user_dob"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <DatePicker
-                maxDate={ 
-                  dayjs()
-                    .subtract(18, "year")
-                    .toDate()
-                }
+              <img //logo
+                src="/logo.svg"
+                alt="Logo"
+                style={{
+                  // borderRadius: "50%",
+                  width: "60%",
+                }}
               />
-            </Form.Item>
-
-            <Form.Item
-              label="Sex"
-              name="user_sex"
-              rules={[{ required: true, message: "Please input!" }]}
+              <p
+                style={{
+                  color: "#E4E1D6",
+                  marginTop: "2rem",
+                  fontSize: 18,
+                  fontStyle: "italic",
+                }}
+              >
+                Book trains with ease with RailEz
+              </p>
+            </Col>
+            <Col
+              xs={24}
+              md={12}
+              lg={12}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
             >
-              <Select placeholder={"Select option"}>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </Select>
-            </Form.Item>
+              <div
+                style={{
+                  border: "1px solid #e4e1d6",
+                  padding: "1.4rem 2rem",
+                  backgroundSize: "cover",
+                  borderRadius: "10px",
+                  maxWidth: "36rem",
+                  minWidth: "30rem",
+                  minHeight: "30rem",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  backgroundColor: "#E4E1D6", //#23221E
+                }}
+              >
+                <h1>Register</h1>
+                <p
+                  style={{
+                    marginTop: "0.4rem",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  Search for running trains for travelling to your destination
+                </p>
 
-            <Form.Item
-              label="Phone no."
-              name="user_phone"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <Input type="number" placeholder={"9999999999"} />
-            </Form.Item>
+                <Form
+                  layout={"vertical"}
+                  variant="filled"
+                  style={{ maxWidth: 600 }}
+                  onFinish={onFormSubmit}
+                >
+                  <Form.Item
+                    label="Name"
+                    name="user_name"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <Input placeholder={"Name"} />
+                  </Form.Item>
 
-            <Form.Item wrapperCol={{ span: 16 }}>
-              <Button type="dashed" htmlType="submit">
-                Start Booking!
-              </Button>
-            </Form.Item>
-          </Form>
-          </div>
+                  <Form.Item
+                    label="Email"
+                    name="user_email"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <Input placeholder={"Email"} />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Password"
+                    name="user_password"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <Input type="password" placeholder={"Password"} />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Date of Birth"
+                    name="user_dob"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <DatePicker
+                      maxDate={dayjs().subtract(18, "year").toDate()}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Sex"
+                    name="user_sex"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <Select placeholder={"Select option"}>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Phone no."
+                    name="user_phone"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <Input type="number" placeholder={"9999999999"} />
+                  </Form.Item>
+
+                  <Form.Item wrapperCol={{ span: 16 }}>
+                    <Button
+                      type="dashed"
+                      htmlType="submit"
+                      className="black-button"
+                    >
+                      Book Now
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </div>
+            </Col>
+          </Row>
         </Content>
       </Layout>
     </Content>

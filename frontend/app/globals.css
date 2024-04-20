@@ -10,7 +10,32 @@ body {
   overflow-x: hidden;
 }
 
+.ant-layout{
+  min-height: calc(100vh - 126px) !important;
+}
+
 a {
   color: inherit;
   text-decoration: none;
+}
+
+
+.ant-layout-header, .ant-menu-dark{
+  background: #111 !important;
+  padding: 0 !important;
+}
+
+
+
+.ant-menu-dark.ant-menu-horizontal >.ant-menu-item-selected{
+  background: #e4e1d6 !important;
+  color: #111 !important;
+}
+
+
+.black-button{
+  background: #111 !important;
+  color: #fff !important;
+  border: 1px solid #111 !important;
+  box-shadow: none !important;
 }

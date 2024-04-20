@@ -1,7 +1,7 @@
 "use client";
 
 import { loginuser } from "@/app/services/table.service";
-import { Form, Input, Layout, Button, notification } from "antd";
+import { Form, Input, Layout, Button, notification, Row, Col } from "antd";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
 
@@ -30,123 +30,145 @@ export default function Login() {
   return (
     <Content
       style={{
-        padding: "0 48px",
-        backgroundColor:  "#141414",
+        padding: "0",
       }}
     >
       <Layout
         style={{
-          padding: "24px 0",
-          backgroundColor:  "#141414",
+          backgroundColor: "#111111",
+          padding: 0,
         }}
       >
         <Content
           style={{
-            padding: "12px 24px",
             minHeight: 280,
             display: "flex",
             justifyContent: "flex-start",
           }}
         >
-          <div
+          <Row
             style={{
-              display: "flex",
-              alignItems: "center",
-              
+              width: "100%",
             }}
           >
-            
-            <img  //logo
-              src="/logo.svg" 
-              alt="Logo"
+            <Col
+              xs={24}
+              md={12}
+              lg={12}
               style={{
-                width: 620,
-                height: 620,
-                borderRadius: "50%",
-                marginRight: 24,
-              }}
-            />
-            <h1 
-              style={{ color:  "#E4E1D6", font:"raleway" }}
-              >
-                WELCOME TO RAILEASE
-                <img  //logo
-                src="/train.svg" 
-                alt="train Logo"
-                style={{
-                width: 40,
-                height: 40,
-                borderRadius: "10%",
-                marginRight: 24,
-                marginLeft: 24,
-              }}
-            />
-              </h1>
-           
-            <div
-              style={{
-                width: "400px", 
-                height: "auto", 
-                border: "1px solid #d9d9d9",
-                borderRadius: "30px", 
-                padding: "24px",
-                backgroundSize: "cover", 
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                marginLeft: "50px",
-                backgroundColor:  "#E4E1D6",  //#23221E
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
               }}
             >
-              <h1 
-              style={{ color:  "#23221E", }}
-              >
-                LOGIN
-              </h1>
+              <img //logo
+                src="/logo.svg"
+                alt="Logo"
+                style={{
+                  // borderRadius: "50%",
+                  width: "60%",
+                }}
+              />
               <p
                 style={{
-                  marginTop: "0.4rem",
-                  marginBottom: "1rem",
-                  color:  "#23221E",
+                  color: "#E4E1D6",
+                  marginTop: "2rem",
+                  fontSize: 18,
+                  fontStyle: "italic",
                 }}
               >
-                Start Booking after logging in!
+                Book trains with ease with RailEz
               </p>
+            </Col>
 
-              <Form
-                layout={"vertical"}
-                variant="filled"
-                style={{ maxWidth: 100 }}
-                onFinish={onFormSubmit}
+            <Col
+              xs={24}
+              md={12}
+              lg={12}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  border: "1px solid #e4e1d6",
+                  padding: "2.4rem 2rem",
+                  backgroundSize: "cover",
+                  borderRadius: "10px",
+                  maxWidth: "30rem",
+                  minWidth: "26rem",
+                  minHeight: "30rem",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  backgroundColor: "#E4E1D6", //#23221E
+                }}
               >
-                <Form.Item
-
-                  label="Email"
-                  name="user_email"
-                  rules={[{ required: true, message: "Please input!" }]}
+                <h1 style={{ color: "#23221E" }}>Login</h1>
+                <p
+                  style={{
+                    marginTop: "0.4rem",
+                    marginBottom: "1rem",
+                    color: "#23221E",
+                  }}
                 >
-                <Input placeholder={"Email"} />
-                </Form.Item>
+                  Start Booking after logging in!
+                </p>
 
-
-
-                <Form.Item
-                  label="Password"
-                  name="user_password"
-                  rules={[{ required: true, message: "Please input!" }]}
+                <Form
+                  layout={"vertical"}
+                  variant="filled"
+                  onFinish={onFormSubmit}
                 >
-                  <Input type="password" placeholder={"Password"} />
-                </Form.Item>
+                  <Form.Item
+                    label="Email"
+                    name="user_email"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <Input placeholder={"Email"} />
+                  </Form.Item>
 
-                <Form.Item wrapperCol={{ span: 16 }}>
-                  <Button type="primary" htmlType="submit">
-                    Login
-                  </Button>
-                </Form.Item>
-                <Button danger onClick={() => router.push("/forgot")}>
-                  Forgot Password
-                </Button>
-              </Form>
-            </div>
-          </div>
+                  <Form.Item
+                    label="Password"
+                    name="user_password"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <Input type="password" placeholder={"Password"} />
+                  </Form.Item>
+
+                  <Form.Item wrapperCol={{ span: 16 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      className="black-button"
+                    >
+                      Login
+                    </Button>
+                  </Form.Item>
+
+                  <p>
+                    Don't have an account?{" "}
+                    <a
+                      style={{ color: "#23221E", fontWeight: "bold" }}
+                      onClick={() => router.push("/")}
+                    >
+                      Register
+                    </a>
+                  </p>
+
+                  <p>
+                    <a
+                      style={{ color: "#23221E", fontWeight: "bold" }}
+                      onClick={() => router.push("/forgot")}
+                    >
+                      Forgot Password
+                    </a>
+                  </p>
+                </Form>
+              </div>
+            </Col>
+          </Row>
         </Content>
       </Layout>
     </Content>
