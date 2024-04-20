@@ -37,22 +37,7 @@ app.get("/", async (req, res) => {
   return res.status(200).json({ results });
 });
 
-app.get("/:table_name", async (req, res) => {
-  try {
-    const { table_name } = req.params;
-    console.log(table_name);
 
-    const [results, fields] = await connection.query(
-      `SELECT * FROM ${table_name};`
-    );
-
-    return res.status(200).json({ results });
-  } catch (error) {
-    console.log(error);
-    console.log("ERROR AAYA");
-    return res.status(500).json({ error });
-  }
-});
 
 app.post("/register", async (req, res) => {
   try {
@@ -166,7 +151,34 @@ app.post("/search", async (req, res) => {
     return res.status(500).json({ error: "An error occurred during the search process" });
   }
 });
+app.get("/tickets", async (req, res) => {
+  try {
+    const query = `SELECT ticket_id,payment_id,status FROM Ticket`;
+    const [results, fields] = await connection.query(query);
 
+    return res.status(200).json({ results });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "An error occurred during the ticket process" });
+  }
+});
+
+app.get("/:table_name", async (req, res) => {
+  try {
+    const { table_name } = req.params;
+    console.log(table_name);
+
+    const [results, fields] = await connection.query(
+      `SELECT * FROM ${table_name};`
+    );
+
+    return res.status(200).json({ results });
+  } catch (error) {
+    console.log(error);
+    console.log("ERROR AAYA");
+    return res.status(500).json({ error });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
