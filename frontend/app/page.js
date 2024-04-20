@@ -41,19 +41,34 @@ export default function Register() {
     <Content
       style={{
         padding: "0 48px",
+        backgroundColor:  "#141414",
       }}
     >
       <Layout
         style={{
           padding: "24px 0",
+          backgroundColor:  "#141414",
         }}
       >
         <Content
           style={{
             padding: "12px 24px",
             minHeight: 280,
+            backgroundColor:  "#141414",
           }}
         >
+          <div
+        style={{
+          width: "100%",
+          maxWidth: 600,
+          padding: 24,
+          borderRadius: 8,
+          border: "1px solid #d9d9d9",
+          background: "#1e1e1e",
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+          backgroundColor:  "#E4E1D6",
+        }}
+      >
           <h1>Register</h1>
           <p
             style={{
@@ -132,6 +147,7 @@ export default function Register() {
               </Button>
             </Form.Item>
           </Form>
+          </div>
         </Content>
       </Layout>
     </Content>
