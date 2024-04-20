@@ -66,7 +66,22 @@ export default function Login() {
                 marginRight: 24,
               }}
             />
-            
+            <h1 
+              style={{ color:  "#E4E1D6", font:"raleway" }}
+              >
+                WELCOME TO RAILEASE
+                <img  //logo
+                src="/train.svg" 
+                alt="train Logo"
+                style={{
+                width: 40,
+                height: 40,
+                borderRadius: "10%",
+                marginRight: 24,
+                marginLeft: 24,
+              }}
+            />
+              </h1>
            
             <div
               style={{
@@ -77,7 +92,7 @@ export default function Login() {
                 padding: "24px",
                 backgroundSize: "cover", 
                 boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                marginLeft: "200px",
+                marginLeft: "50px",
                 backgroundColor:  "#E4E1D6",  //#23221E
               }}
             >
