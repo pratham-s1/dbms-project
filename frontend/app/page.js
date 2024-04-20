@@ -116,7 +116,9 @@ export default function Register() {
             >
               <DatePicker
                 maxDate={ 
-                  dayjs().subtract(1, "day")
+                  dayjs()
+                    .subtract(18, "year")
+                    .toDate()
                 }
               />
             </Form.Item>

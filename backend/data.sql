@@ -78,6 +78,8 @@ CREATE TABLE
     Schedule (
         train_id INT NOT NULL,
         station_id VARCHAR(20) NOT NULL,
+        from_station_id VARCHAR(20),
+        to_station_id VARCHAR(20),
         platform VARCHAR(50),
         arrival_time TIME,
         departure_time TIME,
