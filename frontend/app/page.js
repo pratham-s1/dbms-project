@@ -90,7 +90,7 @@ export default function Register() {
                   fontStyle: "italic",
                 }}
               >
-                Book trains with ease with BookEz
+                Book trains with ease with RailEz
               </p>
             </Col>
             <Col

@@ -116,7 +116,7 @@ export default function MainWrapper({ children }) {
               color: "#fff",
             }}
           >
-            Railway Reservation & Management Portal ©{new Date().getFullYear()}
+            RailEz ©{new Date().getFullYear()}
           </Footer>
         </Layout>
       </AntdRegistry>

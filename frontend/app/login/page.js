@@ -78,7 +78,7 @@ export default function Login() {
                   fontStyle: "italic",
                 }}
               >
-                Book trains with ease with BookEz
+                Book trains with ease with RailEz
               </p>
             </Col>
 
