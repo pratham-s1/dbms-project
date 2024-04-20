@@ -1,7 +1,7 @@
 "use client";
 
 import { search } from "@/app/services/table.service";
-import {useState}from "react";
+import { useState } from "react";
 import {
   Form,
   Input,
@@ -10,17 +10,33 @@ import {
   Button,
   DatePicker,
   notification,
-  Table
+  Table,
+  Radio,
+  Divider,
 } from "antd";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(
+      `selectedRowKeys: ${selectedRowKeys}`,
+      "selectedRows: ",
+      selectedRows
+    );
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === "Disabled User",
+    // Column configuration not to be checked
+    name: record.name,
+  }),
+};
+
 export default function Login() {
   const [data, setData] = useState([]);
   const [columns, setColumns] = useState([]);
   const router = useRouter();
-
 
   const generateColumnsFromData = (data) => {
     console.log({ lol: data });
@@ -39,7 +55,6 @@ export default function Login() {
 
     setColumns(generatedColumns);
   };
-
 
   const onFormSubmit = async (values) => {
     try {
@@ -62,7 +77,6 @@ export default function Login() {
       console.log(error);
     }
   };
-
 
   return (
     <Content
@@ -97,7 +111,6 @@ export default function Login() {
             style={{ maxWidth: 600 }}
             onFinish={onFormSubmit}
           >
-   
             <Form.Item
               label="Source"
               name="source"
@@ -128,15 +141,12 @@ export default function Login() {
             </Form.Item>
 
             <Form.Item
-                label="Date of Travel"
-                name="user_dob"
-                rules={[{ required: true, message: "Please input!" }]}
-              >
-              <DatePicker 
-                minDate={dayjs()}
-              />
+              label="Date of Travel"
+              name="user_dob"
+              rules={[{ required: true, message: "Please input!" }]}
+            >
+              <DatePicker minDate={dayjs()} />
             </Form.Item>
-
 
             <Form.Item wrapperCol={{ span: 16 }}>
               <Button type="primary" htmlType="submit">
@@ -146,12 +156,30 @@ export default function Login() {
           </Form>
 
           {data && (
-                    <Table
-          dataSource={data}
-          columns={columns}
-          bordered
-          scroll={{ x: 965 }}
-        />
+            <>
+              <Divider />
+              <Table
+                rowSelection={{
+                  type: "radio",
+                  ...rowSelection,
+                }}
+                dataSource={data}
+                columns={columns}
+                bordered
+                scroll={{ x: 965 }}
+              />
+
+              <Button
+                onClick={() => {
+                  notification.success({
+                    message: "Success",
+                    description: `Train ${data[0].train_name} booked`,
+                  });
+                }}
+              >
+                Book Train
+              </Button>
+            </>
           )}
         </Content>
       </Layout>
