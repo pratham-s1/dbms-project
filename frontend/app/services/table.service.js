@@ -33,3 +33,15 @@ export const search = async (data) => {
   console.log(res.data);
   return res.data?.results;
 };
+
+export const getTicket = async (data) => {
+  const res = await axios.get(`${BASE_URL}/tickets`);
+  console.log(res.data);
+  return res.data?.results;
+};
+
+export const getStations = async (data) => {
+  const res = await axios.get(`${BASE_URL}/getStations`);
+  console.log(res.data);
+  return res.data?.results;
+};

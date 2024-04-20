@@ -54,7 +54,8 @@ def insert_train_and_schedule_data(train_data, conn):
                 or 'emu' in train.get('train_name', '').lower()
                 or 'dmu' in train.get('train_name', '').lower()
                 or 'suburban' in train.get('train_name', '').lower()
-                or 'metro' in train.get('train_name', '').lower()                
+                or 'metro' in train.get('train_name', '').lower()          
+                or 'ladies' in train.get('rain_name', '').lower()     
                 ):
                 print(f"Skipping local train: {train['train_name']}")
                 continue  # Skip if train name contains "local"

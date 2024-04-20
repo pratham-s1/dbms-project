@@ -162,6 +162,17 @@ app.get("/tickets", async (req, res) => {
     return res.status(500).json({ error: "An error occurred during the ticket process" });
   }
 });
+app.get("/getStations", async (req, res) => {
+  try {
+    const query = `SELECT station_id,station_name FROM Station`;
+    const [results, fields] = await connection.query(query);
+
+    return res.status(200).json({ results });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "An error occurred during the ticket process" });
+  }
+});
 
 app.get("/:table_name", async (req, res) => {
   try {

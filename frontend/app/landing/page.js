@@ -5,11 +5,10 @@ import { Form, Input, Layout, Button } from "antd";
 const { Content } = Layout;
 
 export default function Landing() {
-    const router = useRouter();
-
-    const onFormSubmit = (values) => {
-        // Handle form submission logic here
-        console.log('Form submitted with values:', values);
+  const router = useRouter();
+  const onFormSubmit = (values) => {
+    // Handle form submission logic here
+    console.log('Form submitted with values:', values);
     };
 
     return (

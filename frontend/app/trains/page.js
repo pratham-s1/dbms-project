@@ -1,6 +1,7 @@
 "use client";
 
-import { search } from "@/app/services/table.service";
+import { getStations, search } from "@/app/services/table.service";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   Form,
@@ -35,6 +36,8 @@ const rowSelection = {
 
 export default function Login() {
   const [data, setData] = useState([]);
+  const [dropdownData, setDropdowndata] = useState([]);
+
   const [columns, setColumns] = useState([]);
   const router = useRouter();
 
@@ -55,6 +58,16 @@ export default function Login() {
 
     setColumns(generatedColumns);
   };
+  const fetchServices = async () => {
+    const res = await getStations();
+    console.log(res);
+    setDropdowndata(res);
+  };
+
+  const { isLoading } = useQuery({
+    queryKey: ["fetchStations"],
+    queryFn: fetchServices,
+  });
 
   const onFormSubmit = async (values) => {
     try {
@@ -78,6 +91,8 @@ export default function Login() {
     }
   };
 
+  const filterOption = (input, option) =>
+    (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
   return (
     <Content
       style={{
@@ -116,13 +131,17 @@ export default function Login() {
               name="source"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <Select placeholder={"Select source"}>
-                <option value="Delhi">Delhi</option>
-                <option value="Mumbai">Mumbai</option>
-                <option value="Bangalore">Bangalore</option>
-                <option value="Kolkata">Kolkata</option>
-                <option value="Jaipur">Jaipur</option>
-              </Select>
+              <Select
+                placeholder={"Select source"}
+                showSearch
+                filterOption={filterOption}
+                options={dropdownData?.map((item) => {
+                  return {
+                    value: item.station_name,
+                    label: item.station_name,
+                  };
+                })}
+              ></Select>
             </Form.Item>
 
             <Form.Item
@@ -130,14 +149,17 @@ export default function Login() {
               name="destination"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <Select placeholder={"Select destination"}>
-                <option value="Delhi">Delhi</option>
-                <option value="Mumbai">Mumbai</option>
-                <option value="Bangalore">Bangalore</option>
-                <option value="Chennai">Chennai</option>
-                <option value="Pune">Pune</option>
-                <option value="Ahmedabad">Ahmedabad</option>
-              </Select>
+              <Select
+                placeholder={"Select destination"}
+                showSearch
+                filterOption={filterOption}
+                options={dropdownData?.map((item) => {
+                  return {
+                    value: item.station_name,
+                    label: item.station_name,
+                  };
+                })}
+              ></Select>
             </Form.Item>
 
             <Form.Item
@@ -167,6 +189,7 @@ export default function Login() {
                 columns={columns}
                 bordered
                 scroll={{ x: 965 }}
+                rowKey={"train_id"}
               />
 
               <Button
