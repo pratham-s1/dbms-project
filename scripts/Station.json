@@ -1,0 +1,307 @@
+[
+    {
+        "station_id": "ADI",
+        "station_name": "AHMEDABAD JN",
+        "city": "Ahmedabad"
+    },
+    {
+        "station_id": "ADL",
+        "station_name": "ADL Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "ANDI",
+        "station_name": "ADARSH NAGAR DELHI",
+        "city": "Delhi"
+    },
+    {
+        "station_id": "ANVT",
+        "station_name": "ANVT Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "ASV",
+        "station_name": "ASV Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "BDTS",
+        "station_name": "MUMBAI BANDRA TERMINUS",
+        "city": "Mumbai"
+    },
+    {
+        "station_id": "BHET",
+        "station_name": "BHET Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "BNC",
+        "station_name": "BANGALORE CANT (BENGALURU",
+        "city": "Bengaluru"
+    },
+    {
+        "station_id": "BSR",
+        "station_name": "BSR Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "BVI",
+        "station_name": "BVI Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "CGL",
+        "station_name": "CGL Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "CLDY",
+        "station_name": "CLDY Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "CP",
+        "station_name": "KOLKATA",
+        "city": "Kolkata"
+    },
+    {
+        "station_id": "CSMT",
+        "station_name": "MUMBAI CSMT",
+        "city": "Mumbai"
+    },
+    {
+        "station_id": "DDN",
+        "station_name": "DEHRADUN",
+        "city": "Dehradun"
+    },
+    {
+        "station_id": "DDR",
+        "station_name": "DDR Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "DEC",
+        "station_name": "DELHI CANTT",
+        "city": "Delhi"
+    },
+    {
+        "station_id": "DEE",
+        "station_name": "DELHI SARAI ROHILLA",
+        "city": "Delhi"
+    },
+    {
+        "station_id": "DKAE",
+        "station_name": "DKAE Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "DLI",
+        "station_name": "OLD DELHI",
+        "city": "Delhi"
+    },
+    {
+        "station_id": "DR",
+        "station_name": "MUMBAI DADAR CENTRAL",
+        "city": "Mumbai"
+    },
+    {
+        "station_id": "DSA",
+        "station_name": "DELHI SHAHDARA",
+        "city": "Delhi"
+    },
+    {
+        "station_id": "DSJ",
+        "station_name": "DELHI SAFDARJUNG",
+        "city": "Delhi"
+    },
+    {
+        "station_id": "HOM",
+        "station_name": "CHENNAI HARBOUR",
+        "city": "Chennai"
+    },
+    {
+        "station_id": "HW",
+        "station_name": "HARIDWAR JN",
+        "city": "Haridwar"
+    },
+    {
+        "station_id": "HWH",
+        "station_name": "HWH Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "HYB",
+        "station_name": "HYDERABAD DECCAN",
+        "city": "Hyderabad"
+    },
+    {
+        "station_id": "JP",
+        "station_name": "JAIPUR",
+        "city": "Jaipur"
+    },
+    {
+        "station_id": "JPF",
+        "station_name": "JAIPUR JN MG",
+        "city": "Jaipur"
+    },
+    {
+        "station_id": "KCG",
+        "station_name": "KCG Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "KJM",
+        "station_name": "KJM Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "KOAA",
+        "station_name": "KOAA Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "KYN",
+        "station_name": "KYN Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "LPI",
+        "station_name": "LPI Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "LTT",
+        "station_name": "LTT Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "MAS",
+        "station_name": "MGR CHENNAI CENTRAL",
+        "city": "Chennai"
+    },
+    {
+        "station_id": "MM",
+        "station_name": "MUMBAI MAHIM JN",
+        "city": "Mumbai"
+    },
+    {
+        "station_id": "MMCT",
+        "station_name": "MUMBAI CENTRAL",
+        "city": "Mumbai"
+    },
+    {
+        "station_id": "MS",
+        "station_name": "CHENNAI EGMORE",
+        "city": "Chennai"
+    },
+    {
+        "station_id": "MSB",
+        "station_name": "CHENNAI BEACH",
+        "city": "Chennai"
+    },
+    {
+        "station_id": "MSF",
+        "station_name": "CHENNAI FORT",
+        "city": "Chennai"
+    },
+    {
+        "station_id": "NDLS",
+        "station_name": "NEW DELHI",
+        "city": "Delhi"
+    },
+    {
+        "station_id": "NZM",
+        "station_name": "DELHI HAZRAT NIZAMUDDIN",
+        "city": "Delhi"
+    },
+    {
+        "station_id": "PER",
+        "station_name": "PER Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "PNVL",
+        "station_name": "PNVL Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "RVJ",
+        "station_name": "MUMBAI RAVLI JN",
+        "city": "Mumbai"
+    },
+    {
+        "station_id": "SBC",
+        "station_name": "KSR BENGALURU",
+        "city": "Bengaluru"
+    },
+    {
+        "station_id": "SBI",
+        "station_name": "SBI Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "SBIB",
+        "station_name": "SBIB Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "SC",
+        "station_name": "SC Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "SDAH",
+        "station_name": "KOLKATA SEALDAH",
+        "city": "Kolkata"
+    },
+    {
+        "station_id": "SHM",
+        "station_name": "SHM Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "SIN",
+        "station_name": "MUMBAI SION",
+        "city": "Mumbai"
+    },
+    {
+        "station_id": "SMVB",
+        "station_name": "SMVB Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "SRC",
+        "station_name": "SRC Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "ST",
+        "station_name": "SURAT",
+        "city": "Surat"
+    },
+    {
+        "station_id": "TBM",
+        "station_name": "TBM Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "UD",
+        "station_name": "UDUPI",
+        "city": "Udupi"
+    },
+    {
+        "station_id": "UDN",
+        "station_name": "UDN Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "YNK",
+        "station_name": "YNK Station",
+        "city": "Unknown"
+    },
+    {
+        "station_id": "YPR",
+        "station_name": "YESVANTPUR JN (BENGALURU",
+        "city": "Bengaluru"
+    }
+]
