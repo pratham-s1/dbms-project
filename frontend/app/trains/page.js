@@ -97,11 +97,13 @@ export default function Login() {
     <Content
       style={{
         padding: "0 48px",
+        backgroundColor: "#111111",
       }}
     >
       <Layout
         style={{
           padding: "24px 0",
+          
         }}
       >
         <Content

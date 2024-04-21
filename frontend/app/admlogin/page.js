@@ -89,7 +89,7 @@ export default function Login() {
                   backgroundColor: "#E4E1D6",
                 }}
               >
-                <h1 style={{ color: "#23221E" }}>Login</h1>
+                <h1 style={{ color: "#23221E" }}>Admin Login</h1>
                 <p
                   style={{
                     marginTop: "0.4rem",
@@ -97,7 +97,7 @@ export default function Login() {
                     color: "#23221E",
                   }}
                 >
-                  Start Booking after logging in!
+                    Login to your account
                 </p>
 
                 <Form
@@ -131,15 +131,7 @@ export default function Login() {
                     </Button>
                   </Form.Item>
 
-                  <p>
-                    Don't have an account?{" "}
-                    <a
-                      style={{ color: "#23221E", fontWeight: "bold" }}
-                      onClick={() => router.push("/")}
-                    >
-                      Register
-                    </a>
-                  </p>
+                 
 
                   <p>
                     <a
@@ -148,17 +140,6 @@ export default function Login() {
                     >
                       Forgot Password
                     </a>
-
-
-                    <p>
-                    Login as Admin{" "}
-                    <a
-                      style={{ color: "#23221E", fontWeight: "bold" }}
-                      onClick={() => router.push("/admlogin")}
-                    >
-                      Here
-                    </a>
-                  </p>
                   </p>
                 </Form>
               </div>
