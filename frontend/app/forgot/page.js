@@ -17,7 +17,7 @@ export default function Login() {
         message: "Password reset successfully!",
         description: "Login again",
       });
-      router.push("/login");
+      router.push("/");
     } catch (error) {
       notification.error({
         message: "Error",

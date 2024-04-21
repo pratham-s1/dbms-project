@@ -1,50 +1,56 @@
 "use client";
 
-import { loginuser } from "@/app/services/table.service";
+import { registeruser } from "@/app/services/table.service";
 import {
   Form,
   Input,
+  Select,
   Layout,
   Button,
+  DatePicker,
   notification,
   Row,
   Col,
-  Card,
 } from "antd";
+import dayjs from "dayjs";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
-import { setUser } from "../store/user.slice";
 
-export default function Login() {
+export default function Register() {
   const router = useRouter();
-  const dispatch = useDispatch();
 
   const onFormSubmit = async (values) => {
     try {
       console.log(values);
-      const res = await loginuser(values);
-      console.log("login data", res.data);
+      const res = await registeruser(values);
+      console.log(res);
       notification.success({
         message: "Success",
-        description: "User logged in successfully",
+        description: "User registered successfully",
       });
-
-      dispatch(setUser(res.data));
-
-      router.push("/trains");
+      router.push("/login");
     } catch (error) {
       notification.error({
         message: "Error",
         description: JSON.stringify(error),
       });
+
       console.log(error);
     }
   };
 
   return (
-    <Content style={{ padding: "0" }}>
-      <Layout style={{ backgroundColor: "#111111", padding: 0 }}>
+    <Content
+      style={{
+        padding: "0",
+      }}
+    >
+      <Layout
+        style={{
+          backgroundColor: "#111111",
+          padding: 0,
+        }}
+      >
         <Content
           style={{
             minHeight: 280,
@@ -52,7 +58,11 @@ export default function Login() {
             justifyContent: "flex-start",
           }}
         >
-          <Row style={{ width: "100%" }}>
+          <Row
+            style={{
+              width: "100%",
+            }}
+          >
             <Col
               xs={24}
               md={12}
@@ -64,7 +74,14 @@ export default function Login() {
                 flexDirection: "column",
               }}
             >
-              <img src="/logo.svg" alt="Logo" style={{ width: "60%" }} />
+              <img //logo
+                src="/logo.svg"
+                alt="Logo"
+                style={{
+                  // borderRadius: "50%",
+                  width: "60%",
+                }}
+              />
               <p
                 style={{
                   color: "#E4E1D6",
@@ -73,10 +90,9 @@ export default function Login() {
                   fontStyle: "italic",
                 }}
               >
-                RailEz Book Trains with ease
+                Book trains with ease with RailEz
               </p>
             </Col>
-
             <Col
               xs={24}
               md={12}
@@ -85,37 +101,46 @@ export default function Login() {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                flexDirection: "column",
               }}
             >
               <div
                 style={{
                   border: "1px solid #e4e1d6",
-                  padding: "2.4rem 2rem",
+                  padding: "1.4rem 2rem",
                   backgroundSize: "cover",
                   borderRadius: "10px",
-                  maxWidth: "30rem",
-                  minWidth: "26rem",
+                  maxWidth: "36rem",
+                  minWidth: "30rem",
                   minHeight: "30rem",
                   boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                  backgroundColor: "#E4E1D6",
+                  backgroundColor: "#E4E1D6", //#23221E
                 }}
               >
-                <h1 style={{ color: "#23221E" }}>Login</h1>
+                <h1>Register</h1>
                 <p
                   style={{
                     marginTop: "0.4rem",
                     marginBottom: "1rem",
-                    color: "#23221E",
                   }}
                 >
-                  Start Booking after logging in!
+                  Search for running trains for travelling to your destination
                 </p>
 
                 <Form
                   layout={"vertical"}
                   variant="filled"
+                  style={{ maxWidth: 600 }}
                   onFinish={onFormSubmit}
                 >
+                  <Form.Item
+                    label="Name"
+                    name="passenger_name"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <Input placeholder={"Name"} />
+                  </Form.Item>
+
                   <Form.Item
                     label="Email"
                     name="passenger_email"
@@ -132,64 +157,55 @@ export default function Login() {
                     <Input type="password" placeholder={"Password"} />
                   </Form.Item>
 
+                  <Form.Item
+                    label="Date of Birth"
+                    name="passenger_dob"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <DatePicker
+                      disabledDate={(current) => {
+                        // This will disable all dates greater than today minus 18 years
+                        const eighteenYearsAgo = dayjs().subtract(18, "years");
+                        return current.isAfter(eighteenYearsAgo, "day");
+                      }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Sex"
+                    name="passenger_sex"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <Select placeholder={"Select option"}>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Phone no."
+                    name="passenger_phone"
+                    rules={[{ required: true, message: "Please input!" }]}
+                  >
+                    <Input type="number" placeholder={"9999999999"} />
+                  </Form.Item>
+
                   <Form.Item wrapperCol={{ span: 16 }}>
                     <Button
-                      type="primary"
+                      type="dashed"
                       htmlType="submit"
                       className="black-button"
                     >
-                      Login
+                      Book Now
                     </Button>
                   </Form.Item>
-
-                  <p>
-                    Don&apos;t have an account?{" "}
-                    <a
-                      style={{ color: "#23221E", fontWeight: "bold" }}
-                      onClick={() => router.push("/")}
-                    >
-                      Register
-                    </a>
-                  </p>
-
-                  <p>
-                    <a
-                      style={{ color: "#23221E", fontWeight: "bold" }}
-                      onClick={() => router.push("/forgot")}
-                    >
-                      Forgot Password
-                    </a>
-
-                    <p>
-                      Login as Admin{" "}
-                      <a
-                        style={{ color: "#23221E", fontWeight: "bold" }}
-                        onClick={() => router.push("/admlogin")}
-                      >
-                        Here
-                      </a>
-                    </p>
-                  </p>
                 </Form>
               </div>
             </Col>
           </Row>
         </Content>
       </Layout>
-      <div style={{ padding: "24px", background: "#111111" }}>
-        <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12} md={12} lg={8}>
-            <Card title="Card 1" bordered={false}>
-              <p>Card content</p>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={12} lg={8}>
-            <Card title="Card 2" bordered={false}>
-              <p>Card content</p>
-            </Card>
-          </Col>
-        </Row>
-      </div>
     </Content>
   );
 }

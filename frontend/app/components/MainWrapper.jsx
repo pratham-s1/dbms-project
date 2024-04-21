@@ -1,126 +1,44 @@
 "use client";
 import React from "react";
-import { useRouter, usePathname } from "next/navigation";
 
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import {
-  BookOutlined,
-  HomeOutlined,
-  SearchOutlined,
-  LoginOutlined,
-} from "@ant-design/icons";
 
-import { Menu, Layout } from "antd";
+import { Layout } from "antd";
 const { Header, Footer } = Layout;
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
-import { store } from "../store/store";
+import { PersistGate } from "redux-persist/integration/react";
+
+import { store, persistor } from "../store/store";
+import HeaderComponent from "./HeaderComponent";
 const queryClient = new QueryClient();
 
 export default function MainWrapper({ children }) {
-  const router = useRouter();
-  const path = usePathname();
-
-  const defaultKey = () => {
-    if (path === "/") {
-      return "1";
-    } else if (path === "/trains") {
-      return "2";
-    } else if (path === "/admin") {
-      return "3";
-    } else if (path === "/landing") {
-      return "4";
-    } else if (path === "/login") {
-      return "0";
-    }
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <AntdRegistry>
         <Provider store={store}>
-          <Layout>
-            <Header
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <div className="demo-logo" />
-              <Menu
-                theme="dark"
-                mode="horizontal"
-                defaultSelectedKeys={[defaultKey()]}
-                items={[
-                  {
-                    key: "0",
-                    icon: <LoginOutlined />,
-                    label: "Login",
-                    onClick: (e) => {
-                      console.log("clicked");
-                      router.push("/login");
-                    },
-                  },
-                  {
-                    key: "1",
-                    icon: <HomeOutlined />,
-                    label: "Register",
-                    onClick: (e) => {
-                      console.log("clicked");
-                      router.push("/");
-                    },
-                  },
-                  {
-                    key: "2",
-                    icon: <BookOutlined />,
-                    label: "Book Trains",
-                    onClick: (e) => {
-                      console.log("clicked");
-                      router.push("/trains");
-                    },
-                  },
-                  {
-                    key: "3",
-                    icon: <SearchOutlined />,
-                    label: "Admin",
-                    onClick: (e) => {
-                      console.log("clicked");
-                      router.push("/admin");
-                    },
-                  },
-                  {
-                    key: "4",
-                    icon: <HomeOutlined />,
-                    label: "Landing",
-                    onClick: (e) => {
-                      console.log("clicked");
-                      router.push("/landing");
-                    },
-                  },
-                ]}
+          <PersistGate loading={null} persistor={persistor}>
+            <HeaderComponent />
+            <Layout>
+              <div
                 style={{
-                  flex: 1,
-                  minWidth: 0,
+                  height: "100%",
                 }}
-              />
-            </Header>
-            <div
-              style={{
-                height: "100%",
-              }}
-            >
-              {children}
-            </div>
-            <Footer
-              style={{
-                textAlign: "center",
-                backgroundColor: "#111111",
-                color: "#fff",
-              }}
-            >
-              RailEz ©{new Date().getFullYear()}
-            </Footer>
-          </Layout>
+              >
+                {children}
+              </div>
+              <Footer
+                style={{
+                  textAlign: "center",
+                  backgroundColor: "#111111",
+                  color: "#fff",
+                }}
+              >
+                RailEz ©{new Date().getFullYear()}
+              </Footer>
+            </Layout>
+          </PersistGate>
         </Provider>
       </AntdRegistry>
     </QueryClientProvider>
