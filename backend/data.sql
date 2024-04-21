@@ -84,7 +84,11 @@ CREATE TABLE
         food_preference VARCHAR(100),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         status ENUM ('Pending', 'Confirmed', 'Cancelled'),
+<<<<<<< Updated upstream
         FOREIGN KEY (passenger_id) REFERENCES Passenger (passenger_id),
+=======
+        FOREIGN KEY (passenger_id) REFERENCES User (passenger_id),
+>>>>>>> Stashed changes
         FOREIGN KEY (payment_id) REFERENCES Payment (payment_id),
         FOREIGN KEY (seat_id) REFERENCES Seat (seat_id)
     );

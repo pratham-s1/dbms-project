@@ -60,9 +60,9 @@ def main():
             table_name = json_file.replace('.json', '')
             
             # drop table if exists
-            cursor = conn.cursor()
-            cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
-            cursor.close()
+            #cursor = conn.cursor()
+            #cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+            #cursor.close()
 
             import_data_from_json(conn, json_file, table_name)
 

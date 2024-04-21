@@ -1,5 +1,5 @@
-"use client";
 
+"use client";
 import { getStations, search } from "@/app/services/table.service";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -11,53 +11,21 @@ import {
   Button,
   DatePicker,
   notification,
-  Table,
+  Card,
   Radio,
   Divider,
+  Row,
+  Col,
 } from "antd";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows
-    );
-  },
-  getCheckboxProps: (record) => ({
-    disabled: record.name === "Disabled User",
-    // Column configuration not to be checked
-    name: record.name,
-  }),
-};
-
 export default function Login() {
   const [data, setData] = useState([]);
   const [dropdownData, setDropdowndata] = useState([]);
-
-  const [columns, setColumns] = useState([]);
   const router = useRouter();
 
-  const generateColumnsFromData = (data) => {
-    console.log({ lol: data });
-    if (!data || data.length === 0) return;
-
-    // Assuming all items have the same keys
-    const firstItemKeys = Object.keys(data[0]);
-    console.log(firstItemKeys);
-    const generatedColumns = firstItemKeys.map((key) => ({
-      title: key
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (letter) => letter.toUpperCase()), // Convert snake_case to Title Case
-      dataIndex: key,
-      key: key,
-    }));
-
-    setColumns(generatedColumns);
-  };
   const fetchServices = async () => {
     const res = await getStations();
     console.log(res);
@@ -76,7 +44,6 @@ export default function Login() {
       console.log(res);
 
       setData(res);
-      generateColumnsFromData(res);
       notification.success({
         message: "Success",
         description: "Trains found",
@@ -91,8 +58,32 @@ export default function Login() {
     }
   };
 
-  const filterOption = (input, option) =>
-    (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+  const renderCards = () => {
+    return data.map((item) => (
+      <Col span={24} key={item.train_id}>
+        <Card
+          title={item.train_name}
+          style={{ marginBottom: "16px", backgroundColor:"#E4E1D6" ,}}
+        >
+          <p>Train Number: {item.train_number}
+          Departure Time: {item.departure_time}
+          Arrival Time: {item.arrival_time}
+          Available Seats: {item.available_seats}</p>
+          <Button
+            onClick={() => {
+              notification.success({
+                message: "Success",
+                description: `Train ${item.train_name} booked`,
+              });
+            }}
+          >
+            Book Train
+          </Button>
+        </Card>
+      </Col>
+    ));
+  };
+
   return (
     <Content
       style={{
@@ -103,7 +94,7 @@ export default function Login() {
       <Layout
         style={{
           padding: "24px 0",
-          
+          backgroundColor: "#111111",
         }}
       >
         <Content
@@ -112,98 +103,66 @@ export default function Login() {
             minHeight: 280,
           }}
         >
-          <h1>Search Trains</h1>
-          <p
-            style={{
-              marginTop: "0.4rem",
-              marginBottom: "1rem",
-            }}
+          <Card
+            title="Search Trains"
+            style={{ backgroundColor: "#E4E1D6", borderRadius: "8px" }}
           >
-            Search for running trains for travelling to your destination
-          </p>
-
-          <Form
-            layout={"vertical"}
-            variant="filled"
-            style={{ maxWidth: 600 }}
-            onFinish={onFormSubmit}
-          >
-            <Form.Item
-              label="Source"
-              name="source"
-              rules={[{ required: true, message: "Please input!" }]}
+            <Form
+              layout={"vertical"}
+              variant="filled"
+              style={{ maxWidth: 600 }}
+              onFinish={onFormSubmit}
             >
-              <Select
-                placeholder={"Select source"}
-                showSearch
-                filterOption={filterOption}
-                options={dropdownData?.map((item) => {
-                  return {
+              <Form.Item
+                label="Source"
+                name="source"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <Select
+                  placeholder={"Select source"} showSearch
+                  options={dropdownData.map((item) => ({
                     value: item.station_id,
                     label: item.station_name,
-                  };
-                })}
-              ></Select>
-            </Form.Item>
+                  }))}
+                ></Select>
+              </Form.Item>
 
-            <Form.Item
-              label="Destination"
-              name="destination"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <Select
-                placeholder={"Select destination"}
-                showSearch
-                filterOption={filterOption}
-                options={dropdownData?.map((item) => {
-                  return {
+              <Form.Item
+                label="Destination"
+                name="destination"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <Select
+                  placeholder={"Select destination"} showSearch
+                  options={dropdownData.map((item) => ({
                     value: item.station_id,
                     label: item.station_name,
-                  };
-                })}
-              ></Select>
-            </Form.Item>
+                  }))}
+                ></Select>
+              </Form.Item>
 
-            <Form.Item
-              label="Date of Travel"
-              name="user_dob"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <DatePicker minDate={dayjs()} />
-            </Form.Item>
+              <Form.Item
+                label="Date of Travel"
+                name="user_dob"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <DatePicker minDate={dayjs()} />
+              </Form.Item>
 
-            <Form.Item wrapperCol={{ span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                Search for Trains
-              </Button>
-            </Form.Item>
-          </Form>
+              <Form.Item wrapperCol={{ span: 16 }}>
+                <Button type="primary" htmlType="submit">
+                  Search for Trains
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
 
-          {data && (
+          {data.length > 0 && (
             <>
               <Divider />
-              <Table
-                rowSelection={{
-                  type: "radio",
-                  ...rowSelection,
-                }}
-                dataSource={data}
-                columns={columns}
-                bordered
-                scroll={{ x: 965 }}
-                rowKey={"train_id"}
-              />
-
-              <Button
-                onClick={() => {
-                  notification.success({
-                    message: "Success",
-                    description: `Train ${data[0].train_name} booked`,
-                  });
-                }}
-              >
-                Book Train
-              </Button>
+              <Row gutter={[16, 16]}>
+                {renderCards()}
+              </Row>
             </>
           )}
         </Content>
