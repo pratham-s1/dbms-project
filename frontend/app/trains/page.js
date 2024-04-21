@@ -1,4 +1,3 @@
-
 "use client";
 import { getStations, search } from "@/app/services/table.service";
 import { useQuery } from "@tanstack/react-query";
@@ -20,8 +19,13 @@ import {
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
+import { useSelector } from "react-redux";
 
 export default function Login() {
+  const user = useSelector((state) => state.user);
+
+  console.log(user);
+
   const [data, setData] = useState([]);
   const [dropdownData, setDropdowndata] = useState([]);
   const router = useRouter();
@@ -63,12 +67,14 @@ export default function Login() {
       <Col span={24} key={item.train_id}>
         <Card
           title={item.train_name}
-          style={{ marginBottom: "16px", backgroundColor:"#E4E1D6" ,}}
+          style={{ marginBottom: "16px", backgroundColor: "#E4E1D6" }}
         >
-          <p>Train Number: {item.train_number}
-          Departure Time: {item.departure_time}
-          Arrival Time: {item.arrival_time}
-          Available Seats: {item.available_seats}</p>
+          <p>
+            Train Number: {item.train_number}
+            Departure Time: {item.departure_time}
+            Arrival Time: {item.arrival_time}
+            Available Seats: {item.available_seats}
+          </p>
           <Button
             onClick={() => {
               notification.success({
@@ -119,7 +125,8 @@ export default function Login() {
                 rules={[{ required: true, message: "Please input!" }]}
               >
                 <Select
-                  placeholder={"Select source"} showSearch
+                  placeholder={"Select source"}
+                  showSearch
                   options={dropdownData.map((item) => ({
                     value: item.station_id,
                     label: item.station_name,
@@ -133,7 +140,8 @@ export default function Login() {
                 rules={[{ required: true, message: "Please input!" }]}
               >
                 <Select
-                  placeholder={"Select destination"} showSearch
+                  placeholder={"Select destination"}
+                  showSearch
                   options={dropdownData.map((item) => ({
                     value: item.station_id,
                     label: item.station_name,
@@ -160,9 +168,7 @@ export default function Login() {
           {data.length > 0 && (
             <>
               <Divider />
-              <Row gutter={[16, 16]}>
-                {renderCards()}
-              </Row>
+              <Row gutter={[16, 16]}>{renderCards()}</Row>
             </>
           )}
         </Content>

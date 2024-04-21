@@ -135,7 +135,7 @@ export default function Register() {
                 >
                   <Form.Item
                     label="Name"
-                    name="user_name"
+                    name="passenger_name"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <Input placeholder={"Name"} />
@@ -143,7 +143,7 @@ export default function Register() {
 
                   <Form.Item
                     label="Email"
-                    name="user_email"
+                    name="passenger_email"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <Input placeholder={"Email"} />
@@ -151,7 +151,7 @@ export default function Register() {
 
                   <Form.Item
                     label="Password"
-                    name="user_password"
+                    name="password"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <Input type="password" placeholder={"Password"} />
@@ -159,7 +159,7 @@ export default function Register() {
 
                   <Form.Item
                     label="Date of Birth"
-                    name="user_dob"
+                    name="passenger_dob"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <DatePicker
@@ -173,7 +173,7 @@ export default function Register() {
 
                   <Form.Item
                     label="Sex"
-                    name="user_sex"
+                    name="passenger_sex"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <Select placeholder={"Select option"}>
@@ -185,7 +185,7 @@ export default function Register() {
 
                   <Form.Item
                     label="Phone no."
-                    name="user_phone"
+                    name="passenger_phone"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <Input type="number" placeholder={"9999999999"} />

@@ -1,11 +1,12 @@
 CREATE TABLE
     Passenger (
-        passenger_id INT NOT NULL,
+        passenger_id INT NOT NULL AUTO_INCREMENT,
         passenger_name VARCHAR(255),
         passenger_email VARCHAR(255),
         passenger_sex ENUM ('Male', 'Female', 'Other'),
         passenger_phone VARCHAR(20),
         passenger_dob DATE,
+        password VARCHAR(255),
         PRIMARY KEY (passenger_id)
     );
 

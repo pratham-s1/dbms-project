@@ -13,19 +13,25 @@ import {
 } from "antd";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setUser } from "../store/user.slice";
 
 export default function Login() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const onFormSubmit = async (values) => {
     try {
       console.log(values);
       const res = await loginuser(values);
-      console.log(res);
+      console.log("login data", res.data);
       notification.success({
         message: "Success",
         description: "User logged in successfully",
       });
+
+      dispatch(setUser(res.data));
+
       router.push("/trains");
     } catch (error) {
       notification.error({
@@ -112,7 +118,7 @@ export default function Login() {
                 >
                   <Form.Item
                     label="Email"
-                    name="user_email"
+                    name="passenger_email"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <Input placeholder={"Email"} />
@@ -120,7 +126,7 @@ export default function Login() {
 
                   <Form.Item
                     label="Password"
-                    name="user_password"
+                    name="password"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <Input type="password" placeholder={"Password"} />
@@ -137,7 +143,7 @@ export default function Login() {
                   </Form.Item>
 
                   <p>
-                    Don't have an account?{" "}
+                    Don&apos;t have an account?{" "}
                     <a
                       style={{ color: "#23221E", fontWeight: "bold" }}
                       onClick={() => router.push("/")}

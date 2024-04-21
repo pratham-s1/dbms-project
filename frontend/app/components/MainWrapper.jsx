@@ -13,6 +13,8 @@ import {
 import { Menu, Layout } from "antd";
 const { Header, Footer } = Layout;
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Provider } from "react-redux";
+import { store } from "../store/store";
 const queryClient = new QueryClient();
 
 export default function MainWrapper({ children }) {
@@ -26,10 +28,9 @@ export default function MainWrapper({ children }) {
       return "2";
     } else if (path === "/admin") {
       return "3";
-    }
-    else if (path === "/landing") {
+    } else if (path === "/landing") {
       return "4";
-    } else if (path === "/login"){
+    } else if (path === "/login") {
       return "0";
     }
   };
@@ -37,88 +38,90 @@ export default function MainWrapper({ children }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AntdRegistry>
-        <Layout>
-          <Header
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <div className="demo-logo" />
-            <Menu
-              theme="dark"
-              mode="horizontal"
-              defaultSelectedKeys={[defaultKey()]}
-              items={[
-                {
-                  key: "0",
-                  icon: <LoginOutlined />,
-                  label: "Login",
-                  onClick: (e) => {
-                    console.log("clicked");
-                    router.push("/login");
-                  },
-                },
-                {
-                  key: "1",
-                  icon: <HomeOutlined />,
-                  label: "Register",
-                  onClick: (e) => {
-                    console.log("clicked");
-                    router.push("/");
-                  },
-                },
-                {
-                  key: "2",
-                  icon: <BookOutlined />,
-                  label: "Book Trains",
-                  onClick: (e) => {
-                    console.log("clicked");
-                    router.push("/trains");
-                  },
-                },
-                {
-                  key: "3",
-                  icon: <SearchOutlined />,
-                  label: "Admin",
-                  onClick: (e) => {
-                    console.log("clicked");
-                    router.push("/admin");
-                  },
-                },
-                {
-                  key: "4",
-                  icon: <HomeOutlined />,
-                  label: "Landing",
-                  onClick: (e) => {
-                    console.log("clicked");
-                    router.push("/landing");
-                  },
-                },
-              ]}
+        <Provider store={store}>
+          <Layout>
+            <Header
               style={{
-                flex: 1,
-                minWidth: 0,
+                display: "flex",
+                alignItems: "center",
               }}
-            />
-          </Header>
-          <div
-            style={{
-              height: "100%",
-            }}
-          >
-            {children}
-          </div>
-          <Footer
-            style={{
-              textAlign: "center",
-              backgroundColor: "#111111",
-              color: "#fff",
-            }}
-          >
-            RailEz ©{new Date().getFullYear()}
-          </Footer>
-        </Layout>
+            >
+              <div className="demo-logo" />
+              <Menu
+                theme="dark"
+                mode="horizontal"
+                defaultSelectedKeys={[defaultKey()]}
+                items={[
+                  {
+                    key: "0",
+                    icon: <LoginOutlined />,
+                    label: "Login",
+                    onClick: (e) => {
+                      console.log("clicked");
+                      router.push("/login");
+                    },
+                  },
+                  {
+                    key: "1",
+                    icon: <HomeOutlined />,
+                    label: "Register",
+                    onClick: (e) => {
+                      console.log("clicked");
+                      router.push("/");
+                    },
+                  },
+                  {
+                    key: "2",
+                    icon: <BookOutlined />,
+                    label: "Book Trains",
+                    onClick: (e) => {
+                      console.log("clicked");
+                      router.push("/trains");
+                    },
+                  },
+                  {
+                    key: "3",
+                    icon: <SearchOutlined />,
+                    label: "Admin",
+                    onClick: (e) => {
+                      console.log("clicked");
+                      router.push("/admin");
+                    },
+                  },
+                  {
+                    key: "4",
+                    icon: <HomeOutlined />,
+                    label: "Landing",
+                    onClick: (e) => {
+                      console.log("clicked");
+                      router.push("/landing");
+                    },
+                  },
+                ]}
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                }}
+              />
+            </Header>
+            <div
+              style={{
+                height: "100%",
+              }}
+            >
+              {children}
+            </div>
+            <Footer
+              style={{
+                textAlign: "center",
+                backgroundColor: "#111111",
+                color: "#fff",
+              }}
+            >
+              RailEz ©{new Date().getFullYear()}
+            </Footer>
+          </Layout>
+        </Provider>
       </AntdRegistry>
     </QueryClientProvider>
   );

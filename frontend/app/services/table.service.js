@@ -11,13 +11,13 @@ export const getTableData = async ({ tableName }) => {
 export const registeruser = async (data) => {
   const res = await axios.post(`${BASE_URL}/register`, data);
   console.log(res.data);
-  return res.data?.results;
+  return res.data;
 };
 
 export const loginuser = async (data) => {
   const res = await axios.post(`${BASE_URL}/login`, data);
   console.log(res.data);
-  return res.data?.results;
+  return res.data;
 };
 
 
