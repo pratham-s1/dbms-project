@@ -1,27 +1,62 @@
 CREATE TABLE
-    User (
-        user_id INT PRIMARY KEY AUTO_INCREMENT,
-        user_name VARCHAR(255) NOT NULL,
-        user_email VARCHAR(255) UNIQUE NOT NULL,
-        user_password VARCHAR(255) NOT NULL,
-        user_sex ENUM ('Male', 'Female', 'Other') NOT NULL,
-        user_phone VARCHAR(20),
-        user_dob DATE,
-        user_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        user_is_admin BOOLEAN DEFAULT FALSE
+    Passenger (
+        passenger_id INT NOT NULL,
+        passenger_name VARCHAR(255),
+        passenger_email VARCHAR(255),
+        passenger_sex ENUM ('Male', 'Female', 'Other'),
+        passenger_phone VARCHAR(20),
+        passenger_dob DATE,
+        PRIMARY KEY (passenger_id)
+    );
+
+CREATE TABLE
+    Traveller (
+        traveller_name VARCHAR(255),
+        traveller_email VARCHAR(255),
+        traveller_phone VARCHAR(20),
+        traveller_dob DATE,
+        passenger_id INT,
+        PRIMARY KEY (user_id, passenger_id),
+        FOREIGN KEY (user_id) REFERENCES User (user_id),
+        FOREIGN KEY (passenger_id) REFERENCES Passenger (passenger_id)
+    );
+
+CREATE TABLE
+    Station (
+        station_id VARCHAR(20) PRIMARY KEY,
+        station_name VARCHAR(255),
+        city VARCHAR(255)
     );
 
 CREATE TABLE
     Train (
         train_id INT PRIMARY KEY AUTO_INCREMENT,
         train_name VARCHAR(255),
-        source VARCHAR(255),
-        destination VARCHAR(255),
+        source_id VARCHAR(255),
+        destination_id VARCHAR(255),
         start_time TIME,
         end_time TIME,
         status ENUM ('Scheduled', 'Delayed', 'Cancelled', 'Completed'),
+        FOREIGN KEY (source_id) REFERENCES Station (station_id),
+        FOREIGN KEY (destination_id) REFERENCES Station (station_id),
         total_seats INT
     );
+
+
+CREATE TABLE
+    Schedule (
+        train_id INT NOT NULL,
+        station_id VARCHAR(20) NOT NULL,
+        from_station_id VARCHAR(20),
+        to_station_id VARCHAR(20),
+        platform VARCHAR(50),
+        arrival_time TIME,
+        departure_time TIME,
+        PRIMARY KEY (train_id, station_id),
+        FOREIGN KEY (train_id) REFERENCES Train (train_id),
+        FOREIGN KEY (station_id) REFERENCES Station (station_id)
+    );
+
 
 CREATE TABLE
     Payment (
@@ -54,38 +89,13 @@ CREATE TABLE
         FOREIGN KEY (seat_id) REFERENCES Seat (seat_id)
     );
 
-CREATE TABLE
-    Station (
-        station_id VARCHAR(20) PRIMARY KEY,
-        station_name VARCHAR(255),
-        city VARCHAR(255)
-    );
 
 CREATE TABLE
-    Passenger (
-        user_id INT NOT NULL,
-        passenger_id INT NOT NULL,
-        passenger_name VARCHAR(255),
-        passenger_email VARCHAR(255),
-        passenger_sex ENUM ('Male', 'Female', 'Other'),
-        passenger_phone VARCHAR(20),
-        passenger_dob DATE,
-        FOREIGN KEY (user_id) REFERENCES User (user_id),
-        PRIMARY KEY (user_id, passenger_id)
-    );
-
-CREATE TABLE
-    Schedule (
-        train_id INT NOT NULL,
-        station_id VARCHAR(20) NOT NULL,
-        from_station_id VARCHAR(20),
-        to_station_id VARCHAR(20),
-        platform VARCHAR(50),
-        arrival_time TIME,
-        departure_time TIME,
-        PRIMARY KEY (train_id, station_id),
-        FOREIGN KEY (train_id) REFERENCES Train (train_id),
-        FOREIGN KEY (station_id) REFERENCES Station (station_id)
+    Admin (
+        admin_id INT PRIMARY KEY AUTO_INCREMENT,
+        admin_name VARCHAR(255),
+        admin_email VARCHAR(255),
+        admin_password VARCHAR(255)
     );
 
 INSERT INTO

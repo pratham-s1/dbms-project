@@ -142,7 +142,7 @@ app.post("/forgot", async (req, res) => {
 app.post("/search", async (req, res) => {
   try {
     const { source, destination } = req.body;
-    const query = `SELECT * FROM Train where source='${source}' and destination='${destination}';`;
+    const query = `SELECT * FROM Train where source_id='${source}' and destination_id='${destination}';`;
     const [results, fields] = await connection.query(query);
 
     return res.status(200).json({ results });

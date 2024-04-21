@@ -1,4 +1,3 @@
-import json
 import mysql.connector
 from mysql.connector import Error
 import requests
@@ -31,54 +30,52 @@ def fetch_station_codes(conn):
     cursor.close()
     return stations
 
+def insert_station_if_missing(station_id, conn):
+    cursor = conn.cursor()
+    check_query = "SELECT station_id FROM Station WHERE station_id = %s"
+    insert_query = "INSERT INTO Station (station_id, station_name, city) VALUES (%s, %s, %s)"
+    cursor.execute(check_query, (station_id,))
+    if cursor.fetchone() is None:
+        # Assuming a generic station name and city, update these as needed
+        station_name = f"{station_id} Station"
+        city = "Unknown"
+        cursor.execute(insert_query, (station_id, station_name, city))
+        conn.commit()
+        print(f"Inserted missing station: {station_id}")
+    cursor.close()
+
 def insert_train_and_schedule_data(train_data, conn):
     cursor = conn.cursor()
     train_insert_query = """
-    INSERT INTO Train (train_name, source, destination, start_time, end_time, status, total_seats)
+    INSERT INTO Train (train_name, source_id, destination_id, start_time, end_time, status, total_seats)
     VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
     schedule_insert_query = """
     INSERT INTO Schedule (train_id, station_id, from_station_id, to_station_id, platform, arrival_time, departure_time)
     VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
-    station_check_query = "SELECT station_id FROM Station WHERE station_id = %s"
-    station_insert_query = "INSERT INTO Station (station_id, station_name, city) VALUES (%s, %s, %s)"
-
+    
     try:
         for train in train_data:
-            if ('local' in train.get('train_name', '').lower() 
-                or 'fast' in train.get('train_name', '').lower()
-                or 'slow' in train.get('train_name', '').lower()
-                or 'passenger' in train.get('train_name', '').lower()
-                or 'memu' in train.get('train_name', '').lower()
-                or 'emu' in train.get('train_name', '').lower()
-                or 'dmu' in train.get('train_name', '').lower()
-                or 'suburban' in train.get('train_name', '').lower()
-                or 'metro' in train.get('train_name', '').lower()          
-                or 'ladies' in train.get('rain_name', '').lower()     
-                ):
+            if any(keyword in train.get('train_name', '').lower() for keyword in
+                   ['local', 'fast', 'slow', 'passenger', 'memu', 'emu', 'dmu', 'suburban', 'metro', 'ladies']):
                 print(f"Skipping local train: {train['train_name']}")
-                continue  # Skip if train name contains "local"
+                continue
             
-            source = train.get('source_stn_name', '')
-            destination = train.get('dstn_stn_name', '')
-            from_station_code = train.get('from_stn_code', '')
-            to_station_code = train.get('to_stn_code', '')
+            source_id = train.get('from_stn_code', '')
+            destination_id = train.get('to_stn_code', '')
             from_time = train.get('from_time', '00.00')
             to_time = train.get('to_time', '00.00')
 
-            # Check and insert missing stations
-            for code in [from_station_code, to_station_code]:
-                cursor.execute(station_check_query, (code,))
-                if cursor.fetchone() is None:
-                    print(f"Missing station code: {code}, inserting to Station table.")
-                    cursor.execute(station_insert_query, (code, f"{code} Station", "Unknown City"))
+            # Ensure both stations exist, insert if missing
+            for station_id in [source_id, destination_id]:
+                insert_station_if_missing(station_id, conn)
 
             # Insert into Train table
             cursor.execute(train_insert_query, (
                 train.get('train_name', ''),
-                source,
-                destination,
+                source_id,
+                destination_id,
                 datetime.datetime.strptime(from_time, "%H.%M").time(),
                 datetime.datetime.strptime(to_time, "%H.%M").time(),
                 'Scheduled', 0
@@ -88,9 +85,9 @@ def insert_train_and_schedule_data(train_data, conn):
             # Insert into Schedule table
             cursor.execute(schedule_insert_query, (
                 train_id,
-                to_station_code,
-                from_station_code,
-                to_station_code,
+                destination_id,
+                source_id,
+                destination_id,
                 "", 
                 datetime.datetime.strptime(from_time, "%H.%M").time(),
                 datetime.datetime.strptime(to_time, "%H.%M").time()
@@ -101,7 +98,6 @@ def insert_train_and_schedule_data(train_data, conn):
     finally:
         cursor.close()
 
-# Function to fetch and process train data for each station pair
 def fetch_and_store_train_data(stations, conn):
     api_url = "https://indian-railway-api.cyclic.app/trains/betweenStations/"
     for i in range(len(stations)):
@@ -114,17 +110,16 @@ def fetch_and_store_train_data(stations, conn):
                 print(f"Fetching data for {from_station} to {to_station}: {len(train_data)} entries found")
                 insert_train_and_schedule_data(train_data, conn)
 
-# Main function to manage the database update process
 def main():
     conn = connect_to_db()
     if conn is None:
-        return
+        return 
     stations = fetch_station_codes(conn)
     fetch_and_store_train_data(stations, conn)
     conn.close()
 
-# Execute the function
 main()
+
 
 
 # DELETE FROM Schedule

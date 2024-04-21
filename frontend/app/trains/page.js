@@ -137,7 +137,7 @@ export default function Login() {
                 filterOption={filterOption}
                 options={dropdownData?.map((item) => {
                   return {
-                    value: item.station_name,
+                    value: item.station_id,
                     label: item.station_name,
                   };
                 })}
@@ -155,7 +155,7 @@ export default function Login() {
                 filterOption={filterOption}
                 options={dropdownData?.map((item) => {
                   return {
-                    value: item.station_name,
+                    value: item.station_id,
                     label: item.station_name,
                   };
                 })}

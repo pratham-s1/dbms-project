@@ -17,12 +17,6 @@
         "state_name": "MAHARASHTRA"
       },
       {
-        "name": "MUMBAI CHURCH GATE",
-        "eng_name": "MUMBAI CHURCH GATE",
-        "code": "CCG",
-        "state_name": "MAHARASHTRA"
-      },
-      {
         "name": "MUMBAI CSMT",
         "eng_name": "MUMBAI CSMT",
         "code": "CSMT",
@@ -35,33 +29,9 @@
         "state_name": "Maharashtra"
       },
       {
-        "name": "MUMBAI DADAR WEST",
-        "eng_name": "MUMBAI DADAR WEST",
-        "code": "DDR",
-        "state_name": "MAHARASHTRA"
-      },
-      {
         "name": "MUMBAI MAHIM JN",
         "eng_name": "MUMBAI MAHIM JN",
         "code": "MM",
-        "state_name": "MAHARASHTRA"
-      },
-      {
-        "name": "MUMBAI MARINE LINES",
-        "eng_name": "MUMBAI MARINE LINES",
-        "code": "MEL",
-        "state_name": "MAHARASHTRA"
-      },
-      {
-        "name": "MUMBAI MATUNGA",
-        "eng_name": "MUMBAI MATUNGA",
-        "code": "MTN",
-        "state_name": "MAHARASHTRA"
-      },
-      {
-        "name": "MUMBAI PAREL",
-        "eng_name": "MUMBAI PAREL",
-        "code": "PR",
         "state_name": "MAHARASHTRA"
       },
       {
