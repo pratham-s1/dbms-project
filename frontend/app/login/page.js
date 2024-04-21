@@ -1,7 +1,16 @@
 "use client";
 
 import { loginuser } from "@/app/services/table.service";
-import { Form, Input, Layout, Button, notification, Row, Col, Card } from "antd";
+import {
+  Form,
+  Input,
+  Layout,
+  Button,
+  notification,
+  Row,
+  Col,
+  Card,
+} from "antd";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
 
@@ -49,11 +58,7 @@ export default function Login() {
                 flexDirection: "column",
               }}
             >
-              <img
-                src="/logo.svg"
-                alt="Logo"
-                style={{ width: "60%" }}
-              />
+              <img src="/logo.svg" alt="Logo" style={{ width: "60%" }} />
               <p
                 style={{
                   color: "#E4E1D6",
@@ -62,7 +67,7 @@ export default function Login() {
                   fontStyle: "italic",
                 }}
               >
-               RailEz Book Trains with ease 
+                RailEz Book Trains with ease
               </p>
             </Col>
 
@@ -149,16 +154,15 @@ export default function Login() {
                       Forgot Password
                     </a>
 
-
                     <p>
-                    Login as Admin{" "}
-                    <a
-                      style={{ color: "#23221E", fontWeight: "bold" }}
-                      onClick={() => router.push("/admlogin")}
-                    >
-                      Here
-                    </a>
-                  </p>
+                      Login as Admin{" "}
+                      <a
+                        style={{ color: "#23221E", fontWeight: "bold" }}
+                        onClick={() => router.push("/admlogin")}
+                      >
+                        Here
+                      </a>
+                    </p>
                   </p>
                 </Form>
               </div>
@@ -166,7 +170,7 @@ export default function Login() {
           </Row>
         </Content>
       </Layout>
-      <div style={{ padding: "24px",background: "#111111",}}>
+      <div style={{ padding: "24px", background: "#111111" }}>
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={12} lg={8}>
             <Card title="Card 1" bordered={false}>

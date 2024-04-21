@@ -11,13 +11,13 @@ CREATE TABLE
 
 CREATE TABLE
     Traveller (
+        traveller_id INT NOT NULL,
         traveller_name VARCHAR(255),
         traveller_email VARCHAR(255),
         traveller_phone VARCHAR(20),
         traveller_dob DATE,
         passenger_id INT,
-        PRIMARY KEY (user_id, passenger_id),
-        FOREIGN KEY (user_id) REFERENCES User (user_id),
+        PRIMARY KEY (traveller_id, passenger_id),
         FOREIGN KEY (passenger_id) REFERENCES Passenger (passenger_id)
     );
 
@@ -78,13 +78,13 @@ CREATE TABLE
 CREATE TABLE
     Ticket (
         ticket_id INT PRIMARY KEY AUTO_INCREMENT,
-        user_id INT,
+        passenger_id INT,
         payment_id INT,
         seat_id INT,
         food_preference VARCHAR(100),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         status ENUM ('Pending', 'Confirmed', 'Cancelled'),
-        FOREIGN KEY (user_id) REFERENCES User (user_id),
+        FOREIGN KEY (passenger_id) REFERENCES Passenger (passenger_id),
         FOREIGN KEY (payment_id) REFERENCES Payment (payment_id),
         FOREIGN KEY (seat_id) REFERENCES Seat (seat_id)
     );

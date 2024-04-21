@@ -163,7 +163,11 @@ export default function Register() {
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <DatePicker
-                      maxDate={dayjs().subtract(18, "year").toDate()}
+                      disabledDate={(current) => {
+                        // This will disable all dates greater than today minus 18 years
+                        const eighteenYearsAgo = dayjs().subtract(18, "years");
+                        return current.isAfter(eighteenYearsAgo, "day");
+                      }}
                     />
                   </Form.Item>
 
