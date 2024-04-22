@@ -32,7 +32,7 @@ export default function Login() {
 
       dispatch(setUser(res.data));
 
-      router.push("/trains");
+      router.push("/search");
     } catch (error) {
       notification.error({
         message: "Error",

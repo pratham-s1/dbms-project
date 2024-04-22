@@ -2,27 +2,21 @@
 import { getStations, search } from "@/app/services/table.service";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import {
-  Form,
-  Input,
-  Select,
-  Layout,
-  Button,
-  DatePicker,
-  notification,
-  Card,
-  Radio,
-  Divider,
-  Row,
-  Col,
-} from "antd";
+import { Layout, Button, notification, Card, Divider, Row, Col } from "antd";
 const { Content } = Layout;
-import { useRouter } from "next/navigation";
-import dayjs from "dayjs";
+import { useRouter, useSearchParams } from "next/navigation";
+import Loader from "../components/Loader";
 import { useSelector } from "react-redux";
 
-export default function Login() {
+export default function Trains() {
   const user = useSelector((state) => state.user);
+  const searchParams = useSearchParams();
+
+  const source_id = searchParams.get("source_id");
+  const destination_id = searchParams.get("destination_id");
+  const date = searchParams.get("date");
+
+  console.log({ source_id, destination_id, date });
 
   console.log(user);
 
@@ -107,69 +101,18 @@ export default function Login() {
           style={{
             padding: "12px 24px",
             minHeight: 280,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <Card
-            title="Search Trains"
-            style={{ backgroundColor: "#E4E1D6", borderRadius: "8px" }}
-          >
-            <Form
-              layout={"vertical"}
-              variant="filled"
-              style={{ maxWidth: 600 }}
-              onFinish={onFormSubmit}
-            >
-              <Form.Item
-                label="Source"
-                name="source"
-                rules={[{ required: true, message: "Please input!" }]}
-              >
-                <Select
-                  placeholder={"Select source"}
-                  showSearch
-                  options={dropdownData.map((item) => ({
-                    value: item.station_id,
-                    label: item.station_name,
-                  }))}
-                ></Select>
-              </Form.Item>
-
-              <Form.Item
-                label="Destination"
-                name="destination"
-                rules={[{ required: true, message: "Please input!" }]}
-              >
-                <Select
-                  placeholder={"Select destination"}
-                  showSearch
-                  options={dropdownData.map((item) => ({
-                    value: item.station_id,
-                    label: item.station_name,
-                  }))}
-                ></Select>
-              </Form.Item>
-
-              <Form.Item
-                label="Date of Travel"
-                name="user_dob"
-                rules={[{ required: true, message: "Please input!" }]}
-              >
-                <DatePicker minDate={dayjs()} />
-              </Form.Item>
-
-              <Form.Item wrapperCol={{ span: 16 }}>
-                <Button type="primary" htmlType="submit">
-                  Search for Trains
-                </Button>
-              </Form.Item>
-            </Form>
-          </Card>
-
-          {data.length > 0 && (
+          {data.length > 0 ? (
             <>
               <Divider />
               <Row gutter={[16, 16]}>{renderCards()}</Row>
             </>
+          ) : (
+            <Loader />
           )}
         </Content>
       </Layout>

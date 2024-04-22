@@ -27,7 +27,6 @@ def save_data_to_json():
     all_stations = {}
     for city in cities:
         stations = fetch_station_data(city)
-        time.sleep(2)
         print(f"Fetched data for {city}")
         all_stations[city] = stations
 

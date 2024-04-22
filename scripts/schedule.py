@@ -2,6 +2,23 @@ import mysql.connector
 from mysql.connector import Error
 import requests
 import datetime
+import random
+
+url = "https://irctc1.p.rapidapi.com/api/v1/searchStation"
+headers = {
+    "X-RapidAPI-Key": "ae3a794a55msh31f3fceba9d4407p105a89jsna2bfb3163f3b",
+    "X-RapidAPI-Host": "irctc1.p.rapidapi.com"
+}
+
+# Function to fetch station data for a city
+def fetch_station_data(city):
+    querystring = {"query": city}
+    response = requests.get(url, headers=headers, params=querystring)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Failed to fetch data for {city}: Status code {response.status_code}")
+        return {}
 
 # MySQL database connection details
 db_config = {
@@ -30,25 +47,25 @@ def fetch_station_codes(conn):
     cursor.close()
     return stations
 
-def insert_station_if_missing(station_id, conn):
+def insert_station_if_missing(station_id, station_name, conn):
     cursor = conn.cursor()
     check_query = "SELECT station_id FROM Station WHERE station_id = %s"
     insert_query = "INSERT INTO Station (station_id, station_name, city) VALUES (%s, %s, %s)"
     cursor.execute(check_query, (station_id,))
     if cursor.fetchone() is None:
-        # Assuming a generic station name and city, update these as needed
-        station_name = f"{station_id} Station"
-        city = "Unknown"
-        cursor.execute(insert_query, (station_id, station_name, city))
+        cursor.execute(insert_query, (station_id, station_name, station_name))
         conn.commit()
-        print(f"Inserted missing station: {station_id}")
+        
+        print(f"Inserted missing station: {station_name} ({station_id})")
+
+
     cursor.close()
 
 def insert_train_and_schedule_data(train_data, conn):
     cursor = conn.cursor()
     train_insert_query = """
-    INSERT INTO Train (train_name, source_id, destination_id, start_time, end_time, status, total_seats)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO Train (train_id, train_name, source_id, destination_id, start_time, end_time, status, total_seats)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """
     schedule_insert_query = """
     INSERT INTO Schedule (train_id, station_id, from_station_id, to_station_id, platform, arrival_time, departure_time)
@@ -62,36 +79,53 @@ def insert_train_and_schedule_data(train_data, conn):
                 print(f"Skipping local train: {train['train_name']}")
                 continue
             
-            source_id = train.get('from_stn_code', '')
-            destination_id = train.get('to_stn_code', '')
+            source_station_name = train.get('source_stn_name', '')
+            source_id = train.get('source_stn_code', '')
+            
+            from_station_name = train.get('from_stn_name', '')
+            from_id = train.get('from_stn_code', '')
+            
+            destination_station_name = train.get('dstn_stn_name', '')
+            destination_id = train.get('dstn_stn_code', '')
+            
             from_time = train.get('from_time', '00.00')
             to_time = train.get('to_time', '00.00')
+            train_id = int(train.get('train_no', ''))
 
             # Ensure both stations exist, insert if missing
-            for station_id in [source_id, destination_id]:
-                insert_station_if_missing(station_id, conn)
+            insert_station_if_missing(source_id, source_station_name, conn)
+            insert_station_if_missing(from_id, from_station_name, conn)
+            insert_station_if_missing(destination_id, destination_station_name, conn)
 
-            # Insert into Train table
-            cursor.execute(train_insert_query, (
-                train.get('train_name', ''),
-                source_id,
-                destination_id,
-                datetime.datetime.strptime(from_time, "%H.%M").time(),
-                datetime.datetime.strptime(to_time, "%H.%M").time(),
-                'Scheduled', 0
-            ))
-            train_id = cursor.lastrowid
-
+            try:
+                # Insert into Train table
+                cursor.execute(train_insert_query, (
+                    train_id,
+                    train.get('train_name', ''),
+                    source_id,
+                    destination_id,
+                    datetime.datetime.strptime(from_time, "%H.%M").time(),
+                    datetime.datetime.strptime(to_time, "%H.%M").time(),
+                    'Scheduled', 
+                    200 + int(train_id) % 500
+                ))
+            except Error as e:
+                print(f"Failed to insert train: {e}")
+            
+            # platform can be any number between 1 to 12
+            platform = random.randint(1, 12)
+            
             # Insert into Schedule table
             cursor.execute(schedule_insert_query, (
                 train_id,
-                destination_id,
+                from_id,
                 source_id,
                 destination_id,
-                "", 
+                platform,
                 datetime.datetime.strptime(from_time, "%H.%M").time(),
                 datetime.datetime.strptime(to_time, "%H.%M").time()
             ))
+            
         conn.commit()
     except Error as e:
         print(f"Failed to insert data: {e}")

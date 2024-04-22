@@ -17,7 +17,7 @@ export default function Login() {
         message: "Success",
         description: "User logged in successfully",
       });
-      router.push("/trains");
+      router.push("/search");
     } catch (error) {
       notification.error({
         message: "Error",

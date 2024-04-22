@@ -21,7 +21,7 @@ export default function HeaderComponent() {
   const defaultKey = () => {
     if (path === "/register") {
       return "1";
-    } else if (path === "/trains") {
+    } else if (path === "/search") {
       return "2";
     } else if (path === "/admin") {
       return "3";
@@ -52,7 +52,7 @@ export default function HeaderComponent() {
                     icon: <SearchOutlined />,
                     label: "Search Trains",
                     onClick: (e) => {
-                      router.push("/trains");
+                      router.push("/search");
                     },
                   },
                 ]
@@ -81,7 +81,7 @@ export default function HeaderComponent() {
                     label: "Search Trains",
                     onClick: (e) => {
                       console.log("clicked");
-                      router.push("/trains");
+                      router.push("/search");
                     },
                   },
                   {

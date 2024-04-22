@@ -53,7 +53,7 @@ CREATE TABLE
         platform VARCHAR(50),
         arrival_time TIME,
         departure_time TIME,
-        PRIMARY KEY (train_id, station_id),
+        PRIMARY KEY (train_id, station_id, from_station_id, to_station_id),
         FOREIGN KEY (train_id) REFERENCES Train (train_id),
         FOREIGN KEY (station_id) REFERENCES Station (station_id)
     );
@@ -85,11 +85,7 @@ CREATE TABLE
         food_preference VARCHAR(100),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         status ENUM ('Pending', 'Confirmed', 'Cancelled'),
-<<<<<<< Updated upstream
         FOREIGN KEY (passenger_id) REFERENCES Passenger (passenger_id),
-=======
-        FOREIGN KEY (passenger_id) REFERENCES User (passenger_id),
->>>>>>> Stashed changes
         FOREIGN KEY (payment_id) REFERENCES Payment (payment_id),
         FOREIGN KEY (seat_id) REFERENCES Seat (seat_id)
     );

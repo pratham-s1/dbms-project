@@ -5,6 +5,7 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 
 const JWT_SECRET = process.env.JWT_SECRET; // You should define this in your .env file
 
@@ -220,16 +221,189 @@ app.post("/forgot", async (req, res) => {
 
 app.post("/search", async (req, res) => {
   try {
-    const { source, destination } = req.body;
-    const query = `SELECT * FROM Train where source_id='${source}' and destination_id='${destination}';`;
-    const [results, fields] = await connection.query(query);
+    const { source, destination, date } = req.body;
+    let current_time = new Date();
+    current_time = `${current_time.getHours()}:${current_time.getMinutes()}:${current_time.getSeconds()}`;
 
-    return res.status(200).json({ results });
+    const query = `
+  SELECT T.*, S.arrival_time, S.departure_time
+  FROM Schedule S
+  INNER JOIN Train T ON S.train_id = T.train_id
+  WHERE S.from_station_id = ?
+    AND S.to_station_id = ?
+    AND S.arrival_time > ?
+  ORDER BY S.arrival_time;
+`;
+    const [results] = await connection.execute(query, [
+      source,
+      destination,
+      current_time,
+    ]);
+    if (results.length > 0) {
+      return res.status(200).json({
+        results,
+        info: {
+          source,
+          destination,
+          date,
+        },
+      });
+    } else {
+      // No results found, call external API
+      const apiResponse = await axios.get(
+        `https://indian-railway-api.cyclic.app/trains/betweenStations/?from=${source}&to=${destination}`
+      );
+      const apiData = apiResponse.data.data;
+
+      await connection.beginTransaction();
+
+      for (const train of apiData) {
+        const trainBase = train.train_base;
+        console.dir(trainBase, { depth: null });
+        // Insert Stations
+        await checkAndInsertStation(
+          trainBase.from_stn_code,
+          trainBase.from_stn_name,
+          connection
+        );
+        await checkAndInsertStation(
+          trainBase.to_stn_code,
+          trainBase.to_stn_name,
+          connection
+        );
+
+        // Insert Train and Schedule
+        await insertTrainAndSchedule(trainBase, connection);
+      }
+
+      await connection.commit();
+
+      // Execute query with parameters
+      const [newResults] = await connection.execute(query, [
+        source,
+        destination,
+        current_time,
+      ]);
+
+      if (newResults.length === 0) {
+        return res.status(404).json({
+          error: "No trains found between the given stations",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Data fetched from external API and inserted successfully",
+        results: newResults,
+        info: {
+          source,
+          destination,
+          date,
+        },
+      });
+    }
   } catch (error) {
+    if (connection) await connection.rollback();
     console.log(error);
-    return res.status(500).json({ error: "An error occurred during the search process" });
+    return res
+      .status(500)
+      .json({ error: "An error occurred during the search process" });
   }
 });
+
+async function insertTrainAndSchedule(trainBase, connection) {
+  // Check if the train already exists
+  const [existingTrain] = await connection.execute(
+    `SELECT train_id FROM Train WHERE train_id = ?`,
+    [trainBase.train_no]
+  );
+
+  let trainId = trainBase.train_no;
+
+  if (existingTrain.length === 0) {
+    // Insert new train
+    try {
+      const [insertResult] = await connection.execute(
+        `INSERT INTO Train (train_id, train_name, source_id, destination_id, start_time, end_time, status, total_seats)
+             VALUES (?, ?, ?, ?, STR_TO_DATE(?, '%H.%i'), STR_TO_DATE(?, '%H.%i'), 'Scheduled', ?)`,
+        [
+          trainBase.train_no,
+          trainBase.train_name,
+          trainBase.from_stn_code,
+          trainBase.to_stn_code,
+          trainBase.from_time,
+          trainBase.to_time,
+          200 + Math.floor(Math.random() * 100),
+        ] // total_seats is set to 0 as an example
+      );
+    } catch (error) {
+      console.log("Error inserting train", error);
+    }
+
+    trainId = trainBase.train_no;
+  } else {
+    trainId = existingTrain[0].train_id;
+  }
+
+  // Insert schedule, assuming from and to stations might vary per train route
+  try {
+    // Check if the schedule already exists
+    const [existingSchedule] = await connection.execute(
+      `SELECT * FROM Schedule 
+     WHERE train_id = ? AND station_id = ? AND from_station_id = ? AND to_station_id = ?`,
+      [
+        trainId,
+        trainBase.from_stn_code,
+        trainBase.source_stn_code,
+        trainBase.to_stn_code,
+      ]
+    );
+
+    if (existingSchedule.length === 0) {
+      // Insert schedule
+      try {
+        await connection.execute(
+          `INSERT INTO Schedule (train_id, station_id, from_station_id, to_station_id, platform, arrival_time, departure_time)
+         VALUES (?, ?, ?, ?, NULL, STR_TO_DATE(?, '%H.%i'), STR_TO_DATE(?, '%H.%i'))`,
+          [
+            trainId,
+            trainBase.from_stn_code,
+            trainBase.from_stn_code,
+            trainBase.to_stn_code,
+            trainBase.from_time,
+            trainBase.to_time,
+          ]
+        );
+        console.log("New schedule inserted for train:", trainBase.train_name);
+      } catch (error) {
+        console.log("Error inserting schedule:", error);
+      }
+    } else {
+      console.log(
+        "Schedule already exists for train:",
+        trainBase.train_name,
+        existingSchedule
+      );
+      // Optionally update the existing schedule here if needed
+    }
+  } catch (error) {
+    console.log("Error inserting schedule");
+  }
+}
+
+async function checkAndInsertStation(stationCode, stationName, connection) {
+  const [rows] = await connection.execute(
+    `SELECT station_id FROM Station WHERE station_id = ?`,
+    [stationCode]
+  );
+
+  if (rows.length === 0) {
+    await connection.execute(
+      `INSERT INTO Station (station_id, station_name, city) VALUES (?, ?, ?);`,
+      [stationCode, stationName, stationName] // Assuming city is the same as station name for simplicity
+    );
+  }
+}
+
 app.get("/tickets", async (req, res) => {
   try {
     const query = `SELECT ticket_id,payment_id,status FROM Ticket`;

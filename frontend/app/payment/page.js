@@ -75,7 +75,7 @@ const PaymentPage = () => {
             loading={loading}
             block
               onClick={() => {
-             router.push("/trains");
+             router.push("/search");
                }}
             >
               Pay Now

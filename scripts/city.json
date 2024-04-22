@@ -1,0 +1,284 @@
+{
+  "Mumbai": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617953192,
+    "data": [
+      {
+        "name": "MUMBAI BANDRA TERMINUS",
+        "eng_name": "MUMBAI BANDRA TERMINUS",
+        "code": "BDTS",
+        "state_name": "MAHARASHTRA"
+      },
+      {
+        "name": "MUMBAI CENTRAL",
+        "eng_name": "MUMBAI CENTRAL",
+        "code": "MMCT",
+        "state_name": "MAHARASHTRA"
+      },
+      {
+        "name": "MUMBAI CSMT",
+        "eng_name": "MUMBAI CSMT",
+        "code": "CSMT",
+        "state_name": "Maharashtra"
+      },
+      {
+        "name": "MUMBAI DADAR CENTRAL",
+        "eng_name": "MUMBAI DADAR CENTRAL",
+        "code": "DR",
+        "state_name": "Maharashtra"
+      },
+      {
+        "name": "MUMBAI MAHIM JN",
+        "eng_name": "MUMBAI MAHIM JN",
+        "code": "MM",
+        "state_name": "MAHARASHTRA"
+      },
+      {
+        "name": "MUMBAI RAVLI JN",
+        "eng_name": "MUMBAI RAVLI JN",
+        "code": "RVJ",
+        "state_name": "MAHARASHTRA"
+      },
+      {
+        "name": "MUMBAI SION",
+        "eng_name": "MUMBAI SION",
+        "code": "SIN",
+        "state_name": "MAHARASHTRA"
+      }
+    ]
+  },
+  "Delhi": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617955870,
+    "data": [
+      {
+        "name": "ADARSH NAGAR DELHI",
+        "eng_name": "ADARSH NAGAR DELHI",
+        "code": "ANDI",
+        "state_name": "DELHI"
+      },
+      {
+        "name": "DELHI CANTT",
+        "eng_name": "DELHI CANTT",
+        "code": "DEC",
+        "state_name": "DELHI"
+      },
+      {
+        "name": "DELHI HAZRAT NIZAMUDDIN",
+        "eng_name": "DELHI HAZRAT NIZAMUDDIN",
+        "code": "NZM",
+        "state_name": "DELHI"
+      },
+      {
+        "name": "DELHI SAFDARJUNG",
+        "eng_name": "DELHI SAFDARJUNG",
+        "code": "DSJ",
+        "state_name": "Delhi"
+      },
+      {
+        "name": "DELHI SARAI ROHILLA",
+        "eng_name": "DELHI SARAI ROHILLA",
+        "code": "DEE",
+        "state_name": "DELHI"
+      },
+      {
+        "name": "DELHI SHAHDARA",
+        "eng_name": "DELHI SHAHDARA",
+        "code": "DSA",
+        "state_name": "DELHI"
+      },
+      {
+        "name": "NEW DELHI",
+        "eng_name": "NEW DELHI",
+        "code": "NDLS",
+        "state_name": "DELHI"
+      },
+      {
+        "name": "OLD DELHI",
+        "eng_name": "OLD DELHI",
+        "code": "DLI",
+        "state_name": "DELHI"
+      }
+    ]
+  },
+  "Bengaluru": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617958568,
+    "data": [
+      {
+        "name": "BANGALORE CANT (BENGALURU",
+        "eng_name": "BANGALORE CANT (BENGALURU",
+        "code": "BNC",
+        "state_name": "Karnataka"
+      },
+      {
+        "name": "KSR BENGALURU",
+        "eng_name": "KSR BENGALURU",
+        "code": "SBC",
+        "state_name": "Karnataka"
+      },
+      {
+        "name": "YESVANTPUR JN (BENGALURU",
+        "eng_name": "YESVANTPUR JN (BENGALURU",
+        "code": "YPR",
+        "state_name": "Karnataka"
+      }
+    ]
+  },
+  "Hyderabad": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617961287,
+    "data": [
+      {
+        "name": "HYDERABAD DECCAN",
+        "eng_name": "HYDERABAD DECCAN",
+        "code": "HYB",
+        "state_name": "TELANGANA"
+      }
+    ]
+  },
+  "Ahmedabad": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617963978,
+    "data": [
+      {
+        "name": "AHMEDABAD JN",
+        "eng_name": "AHMEDABAD JN",
+        "code": "ADI",
+        "state_name": "Gujarat"
+      }
+    ]
+  },
+  "Chennai": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617966661,
+    "data": [
+      {
+        "name": "CHENNAI BEACH",
+        "eng_name": "CHENNAI BEACH",
+        "code": "MSB",
+        "state_name": "TAMIL NADU"
+      },
+      {
+        "name": "CHENNAI EGMORE",
+        "eng_name": "CHENNAI EGMORE",
+        "code": "MS",
+        "state_name": "Andhra Pradesh"
+      },
+      {
+        "name": "CHENNAI FORT",
+        "eng_name": "CHENNAI FORT",
+        "code": "MSF",
+        "state_name": "TAMIL NADU"
+      },
+      {
+        "name": "CHENNAI HARBOUR",
+        "eng_name": "CHENNAI HARBOUR",
+        "code": "HOM",
+        "state_name": ""
+      },
+      {
+        "name": "MGR CHENNAI CENTRAL",
+        "eng_name": "MGR CHENNAI CENTRAL",
+        "code": "MAS",
+        "state_name": "Tamil Nadu"
+      }
+    ]
+  },
+  "Kolkata": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617969352,
+    "data": [
+      {
+        "name": "KOLKATA",
+        "eng_name": "KOLKATA",
+        "code": "CP",
+        "state_name": "WEST BENGAL"
+      },
+      {
+        "name": "KOLKATA SEALDAH",
+        "eng_name": "KOLKATA SEALDAH",
+        "code": "SDAH",
+        "state_name": "WEST BENGAL"
+      }
+    ]
+  },
+  "Surat": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617972267,
+    "data": [
+      {
+        "name": "SURAT",
+        "eng_name": "SURAT",
+        "code": "ST",
+        "state_name": "GUJARAT"
+      }
+    ]
+  },
+  "Jaipur": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617975243,
+    "data": [
+      {
+        "name": "JAIPUR",
+        "eng_name": "JAIPUR",
+        "code": "JP",
+        "state_name": "RAJASTHAN"
+      },
+      {
+        "name": "JAIPUR JN MG",
+        "eng_name": "JAIPUR JN MG",
+        "code": "JPF",
+        "state_name": "RAJASTHAN"
+      }
+    ]
+  },
+  "Udupi": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617978291,
+    "data": [
+      {
+        "name": "UDUPI",
+        "eng_name": "UDUPI",
+        "code": "UD",
+        "state_name": "KARNATAKA"
+      }
+    ]
+  },
+  "Dehradun": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617981102,
+    "data": [
+      {
+        "name": "DEHRADUN",
+        "eng_name": "DEHRADUN",
+        "code": "DDN",
+        "state_name": "UTTARAKHAND"
+      }
+    ]
+  },
+  "Haridwar": {
+    "status": true,
+    "message": "Success",
+    "timestamp": 1713617983756,
+    "data": [
+      {
+        "name": "HARIDWAR JN",
+        "eng_name": "HARIDWAR JN",
+        "code": "HW",
+        "state_name": "UTTARAKHAND"
+      }
+    ]
+  }
+}
