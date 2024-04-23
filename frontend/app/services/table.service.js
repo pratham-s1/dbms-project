@@ -27,6 +27,12 @@ export const loginuser = async (data) => {
   return res.data;
 };
 
+export const adminlogin = async (data) => {
+  const res = await apiClient.post(`${BASE_URL}/adminlogin`, data);
+  console.log(res.data);
+  return res.data;
+};
+
 export const forgot = async (data) => {
   const res = await apiClient.post(`${BASE_URL}/forgot`, data);
   console.log(res.data);
@@ -71,6 +77,18 @@ export const verifyPayment = async (data) => {
 
 export const getTicketInfo = async (data) => {
   const res = await apiClient.post(`${BASE_URL}/getTicket`, data);
+  console.log(res.data);
+  return res.data;
+};
+
+export const logout = async () => {
+  const res = await apiClient.post(`${BASE_URL}/logout`);
+  console.log(res.data);
+  return res.data;
+};
+
+export const getRevenue = async () => {
+  const res = await apiClient.get(`${BASE_URL}/revenue`);
   console.log(res.data);
   return res.data;
 };

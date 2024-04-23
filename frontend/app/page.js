@@ -35,8 +35,8 @@ export default function Login() {
       router.push("/search");
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: JSON.stringify(error),
+        message: "Login Failed",
+        description: "Invalid Credentials!",
       });
       console.log(error);
     }
@@ -176,7 +176,7 @@ export default function Login() {
           </Row>
         </Content>
       </Layout>
-      <div style={{ padding: "24px", background: "#111111" }}>
+      {/* <div style={{ padding: "24px", background: "#111111" }}>
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={12} lg={8}>
             <Card title="Card 1" bordered={false}>
@@ -189,7 +189,7 @@ export default function Login() {
             </Card>
           </Col>
         </Row>
-      </div>
+      </div> */}
     </Content>
   );
 }

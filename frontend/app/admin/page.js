@@ -60,6 +60,7 @@ export default function About() {
         <h1
           style={{
             marginBottom: "1rem",
+            color: "#FFF",
           }}
         >
           Train Schedule
@@ -70,14 +71,12 @@ export default function About() {
           defaultValue={selectedTable}
         >
           <Option value="Train">Train</Option>
-          <Option value="User">User</Option>
           <Option value="Ticket">Tickets</Option>
           <Option value="Station">Station</Option>
           <Option value="Schedule">Schedule</Option>
           <Option value="Payment">Payment</Option>
           <Option value="Passenger">Passenger</Option>
           <Option value="Seat">Seat</Option>
-
           {/* Add more options based on your tables */}
         </Select>
         <Table

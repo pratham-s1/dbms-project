@@ -1,23 +1,40 @@
 "use client";
 
-import { loginuser } from "@/app/services/table.service";
-import { Form, Input, Layout, Button, notification, Row, Col, Card } from "antd";
+import { adminlogin } from "@/app/services/table.service";
+import {
+  Form,
+  Input,
+  Layout,
+  Button,
+  notification,
+  Row,
+  Col,
+  Card,
+} from "antd";
 const { Content } = Layout;
 import { useRouter } from "next/navigation";
+import { setUser } from "../store/user.slice";
+import { useDispatch } from "react-redux";
 
 export default function Login() {
   const router = useRouter();
-
+  const dispatch = useDispatch();
   const onFormSubmit = async (values) => {
     try {
       console.log(values);
-      const res = await loginuser(values);
+      const res = await adminlogin(values);
       console.log(res);
+      dispatch(
+        setUser({
+          ...res.data,
+          is_admin: true,
+        })
+      );
       notification.success({
         message: "Success",
         description: "User logged in successfully",
       });
-      router.push("/search");
+      router.push("/admin");
     } catch (error) {
       notification.error({
         message: "Error",
@@ -49,11 +66,7 @@ export default function Login() {
                 flexDirection: "column",
               }}
             >
-              <img
-                src="/logo.svg"
-                alt="Logo"
-                style={{ width: "60%" }}
-              />
+              <img src="/logo.svg" alt="Logo" style={{ width: "60%" }} />
               <p
                 style={{
                   color: "#E4E1D6",
@@ -62,7 +75,7 @@ export default function Login() {
                   fontStyle: "italic",
                 }}
               >
-               RailEz Book Trains with ease 
+                RailEz Book Trains with ease
               </p>
             </Col>
 
@@ -97,7 +110,7 @@ export default function Login() {
                     color: "#23221E",
                   }}
                 >
-                    Login to your account
+                  Login to your account
                 </p>
 
                 <Form
@@ -107,7 +120,7 @@ export default function Login() {
                 >
                   <Form.Item
                     label="Email"
-                    name="user_email"
+                    name="admin_email"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <Input placeholder={"Email"} />
@@ -115,7 +128,7 @@ export default function Login() {
 
                   <Form.Item
                     label="Password"
-                    name="user_password"
+                    name="admin_password"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <Input type="password" placeholder={"Password"} />
@@ -131,8 +144,6 @@ export default function Login() {
                     </Button>
                   </Form.Item>
 
-                 
-
                   <p>
                     <a
                       style={{ color: "#23221E", fontWeight: "bold" }}
@@ -147,20 +158,6 @@ export default function Login() {
           </Row>
         </Content>
       </Layout>
-      <div style={{ padding: "24px",background: "#111111",}}>
-        <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12} md={12} lg={8}>
-            <Card title="Card 1" bordered={false}>
-              <p>Card content</p>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={12} lg={8}>
-            <Card title="Card 2" bordered={false}>
-              <p>Card content</p>
-            </Card>
-          </Col>
-        </Row>
-      </div>
     </Content>
   );
 }

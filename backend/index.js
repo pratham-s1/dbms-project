@@ -54,6 +54,7 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.sendStatus(403); // if the token has expired or is invalid
     req.user = user;
+    req.isAdmin = user.isAdmin ?? false;
     next();
   });
 }
@@ -151,6 +152,92 @@ app.post("/login", async (req, res) => {
     return res.status(500).json({ error: "An error occurred during login" });
   }
 });
+
+app.post("/adminlogin", async (req, res) => {
+  try {
+    const { admin_email, password } = req.body;
+    const query = `SELECT * FROM Admin WHERE admin_email = '${admin_email}' LIMIT 1;`;
+    const [results, fields] = await connection.query(query);
+
+    if (results.length > 0) {
+      const admin = results[0];
+
+      const isMatch = password === admin.password;
+
+      if (isMatch) {
+        // Create JWT token
+        const token = jwt.sign(
+          { email: admin_email, isAdmin: true },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "24h",
+          }
+        );
+
+        // Store JWT in a secure cookie
+        res.cookie("token", token, {
+          httpOnly: true,
+          sameSite: "Strict",
+          secure: process.env.NODE_ENV === "production",
+        });
+
+        return res.status(200).json({
+          success: true,
+          message: "Login successful",
+          data: {
+            admin_name: admin.admin_name,
+            admin_email: admin.admin_email,
+            admin_id: admin.admin_id,
+          },
+        });
+      }
+
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    console.log("Admin not found");
+    return res.status(404).json({ error: "Admin not found" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "An error occurred during login" });
+  }
+});
+
+app.get("/revenue", authenticateToken, async (req, res) => {
+  try {
+    const query = `SELECT 
+   *
+FROM
+    Payment
+WHERE
+    status = 'Completed';`;
+
+    const [results] = await connection.execute(query);
+
+    // query to get total revenue
+    const totalRevenueQuery = `SELECT SUM(price) as total_revenue FROM Payment WHERE status = 'Completed';`;
+
+    const [revenueResults] = await connection.execute(totalRevenueQuery);
+
+    const totalRevenue = revenueResults[0].total_revenue;
+
+    return res.status(200).json({
+      results,
+      totalRevenue,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: "An error occurred during the revenue fetching process",
+    });
+  }
+});
+
+app.post("/logout", async (req, res) => {
+  res.clearCookie("token");
+  return res.status(200).json({ success: true, message: "Logged out" });
+});
+
 
 app.get("/status", async (req, res) => {
   try {
