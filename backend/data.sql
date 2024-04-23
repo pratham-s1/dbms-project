@@ -61,7 +61,7 @@ CREATE TABLE
 
 CREATE TABLE
     Payment (
-        payment_id INT PRIMARY KEY AUTO_INCREMENT,
+        payment_id VARCHAR(40) PRIMARY KEY NOT NULL,
         status ENUM ('Pending', 'Completed', 'Failed'),
         price DECIMAL(10, 2),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -80,7 +80,7 @@ CREATE TABLE
     Ticket (
         ticket_id INT PRIMARY KEY AUTO_INCREMENT,
         passenger_id INT,
-        payment_id INT,
+        payment_id VARCHAR(40),
         seat_id INT,
         food_preference VARCHAR(100),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

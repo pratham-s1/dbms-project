@@ -1,6 +1,6 @@
 "use client";
 import { getStations, search } from "@/app/services/table.service";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   Form,
@@ -35,10 +35,15 @@ export default function Login() {
     queryFn: fetchServices,
   });
 
+  const searchMutation = useMutation({
+    mutationFn: search,
+    mutationKey: ["search-train"],
+  });
+
   const onFormSubmit = async (values) => {
     try {
       console.log(values);
-      const res = await search(values);
+      const res = await searchMutation.mutateAsync(values);
       console.log(res.results);
 
       setData(res.results);
@@ -52,7 +57,7 @@ export default function Login() {
         message: "No Trains Found!",
         description: "Please try again with different criteria",
       });
-
+      setData([]);
       console.log(error);
     }
   };
@@ -110,7 +115,7 @@ export default function Login() {
             style={{ marginTop: "16px", width: "100%" }} // Full width button
             onClick={() => {
               router.push(
-                `/checkout?train_id${item.train_id}&date=${searchData.date}&source=${searchData.source}&destination=${searchData.destination}`
+                `/checkout?train_id=${item.train_id}&date=${searchData.date}&source=${searchData.source}&destination=${searchData.destination}`
               );
             }}
             className="black-button"
@@ -235,7 +240,7 @@ export default function Login() {
               margin: "32px 0",
             }}
             message={
-              isLoading
+              isLoading || searchMutation.isLoading
                 ? "Finding the best trains for you in seconds"
                 : "Start your search now!"
             }

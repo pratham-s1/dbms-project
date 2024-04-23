@@ -24,6 +24,7 @@ export default function MainWrapper({ children }) {
               <div
                 style={{
                   height: "100%",
+                  backgroundColor: "#111111",
                 }}
               >
                 {children}

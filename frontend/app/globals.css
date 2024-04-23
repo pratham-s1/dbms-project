@@ -39,3 +39,35 @@ a {
   border: 1px solid #111 !important;
   box-shadow: none !important;
 }
+
+.ant-tabs-nav{
+  margin: 0 !important;
+}
+
+
+.ant-tabs-nav-wrap{
+  background: #2b2b2b;
+}
+
+.ant-tabs .ant-tabs-tab {
+  color: #e9e9e9 !important; 
+}
+
+.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #fff !important;
+  padding: 0 1rem;
+
+  .anticon{
+    margin: 0 !important;
+    margin-right: 8px !important;
+  }
+}
+.ant-tabs-nav-wrap{
+  padding: 0 1rem;
+}
+
+/* make border color on ant tabs whte */
+.ant-tabs-ink-bar {
+  height: 2px;
+  background: white !important;
+}

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import lottie from "lottie-web";
 
-export default function Loader({ message, style }) {
+export default function Loader({ message, style, pstyle }) {
   const animationContainer = useRef(null);
 
   useEffect(() => {
@@ -46,6 +46,7 @@ export default function Loader({ message, style }) {
       <p
         style={{
           color: "#fff",
+          ...pstyle,
         }}
       >
         {message ? message : quotes[Math.floor(Math.random() * quotes.length)]}

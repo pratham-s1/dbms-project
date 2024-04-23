@@ -27,6 +27,8 @@ export default function HeaderComponent() {
       return "3";
     } else if (path === "/landing") {
       return "4";
+    } else if (path === "/dashboard") {
+      return "5";
     } else if (path === "/") {
       return "0";
     }
@@ -53,6 +55,14 @@ export default function HeaderComponent() {
                     label: "Search Trains",
                     onClick: (e) => {
                       router.push("/search");
+                    },
+                  },
+                  {
+                    key: "5",
+                    icon: <HomeOutlined />,
+                    label: "Dashboard",
+                    onClick: (e) => {
+                      router.push("/dashboard");
                     },
                   },
                 ]
@@ -84,15 +94,15 @@ export default function HeaderComponent() {
                       router.push("/search");
                     },
                   },
-                  {
-                    key: "3",
-                    icon: <BookOutlined />,
-                    label: "Admin",
-                    onClick: (e) => {
-                      console.log("clicked");
-                      router.push("/admin");
-                    },
-                  },
+                  // {
+                  //   key: "3",
+                  //   icon: <BookOutlined />,
+                  //   label: "Admin",
+                  //   onClick: (e) => {
+                  //     console.log("clicked");
+                  //     router.push("/admin");
+                  //   },
+                  // },
                 ]
           }
           style={{

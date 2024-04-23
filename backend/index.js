@@ -7,6 +7,10 @@ import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 
+import Razorpay from "razorpay";
+import { nanoid } from "nanoid";
+import crypto from "crypto";
+
 const JWT_SECRET = process.env.JWT_SECRET; // You should define this in your .env file
 
 const app = express();
@@ -404,17 +408,65 @@ async function checkAndInsertStation(stationCode, stationName, connection) {
   }
 }
 
-app.get("/tickets", async (req, res) => {
+app.get("/tickets", authenticateToken, async (req, res) => {
   try {
-    const query = `SELECT ticket_id,payment_id,status FROM Ticket`;
-    const [results, fields] = await connection.query(query);
+    const email = req.user.email;
+
+    const passengerQuery = `SELECT passenger_id FROM Passenger WHERE passenger_email = ?`;
+
+    const [passengerResults] = await connection.execute(passengerQuery, [
+      email,
+    ]);
+
+    if (passengerResults.length === 0) {
+      return res.status(404).json({
+        error: "Passenger not found",
+      });
+    }
+
+    const passenger_id = passengerResults[0].passenger_id;
+
+    const query = `
+SELECT
+    Ticket.*,
+    Train.*,
+    Schedule.from_station_id,
+    Schedule.to_station_id,
+    Schedule.departure_time,
+    Schedule.arrival_time,
+    FromStation.station_name AS from_station_name,
+    FromStation.city AS from_station_city,
+    ToStation.station_name AS to_station_name,
+    ToStation.city AS to_station_city,
+    Seat.type,
+    Seat.price
+FROM
+    Ticket
+INNER JOIN
+    Seat ON Ticket.seat_id = Seat.seat_id
+INNER JOIN
+    Train ON Seat.train_id = Train.train_id
+INNER JOIN
+    Schedule ON Train.train_id = Schedule.train_id
+INNER JOIN
+    Station FromStation ON Schedule.from_station_id = FromStation.station_id
+INNER JOIN
+    Station ToStation ON Schedule.to_station_id = ToStation.station_id
+WHERE
+    Ticket.passenger_id = ?;
+`;
+
+    const [results] = await connection.execute(query, [passenger_id]);
 
     return res.status(200).json({ results });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ error: "An error occurred during the ticket process" });
+    return res
+      .status(500)
+      .json({ error: "An error occurred during the ticket process" });
   }
 });
+
 app.get("/getStations", async (req, res) => {
   try {
     const query = `SELECT station_id,station_name FROM Station`;
@@ -423,7 +475,327 @@ app.get("/getStations", async (req, res) => {
     return res.status(200).json({ results });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ error: "An error occurred during the ticket process" });
+    return res
+      .status(500)
+      .json({ error: "An error occurred during the ticket process" });
+  }
+});
+
+app.post("/checkoutDetails", async (req, res) => {
+  try {
+    const { source, destination, date, train_id } = req.body;
+
+    const query = `SELECT T.*
+    FROM Schedule S
+    INNER JOIN Train T ON S.train_id = T.train_id
+    WHERE S.from_station_id = ?
+      AND S.to_station_id = ?
+      AND S.arrival_time > ?
+      AND T.train_id = ?
+    ORDER BY S.arrival_time LIMIT 1;`;
+
+    const [results] = await connection.execute(query, [
+      source,
+      destination,
+      date,
+      train_id,
+    ]);
+
+    if (results.length > 0) {
+      // Check if there are seats available for this train
+      let [seats] = await connection.execute(
+        `SELECT * FROM Seat WHERE train_id = ?`,
+        [train_id]
+      );
+
+      if (seats.length === 0) {
+        // No seats found, create a new seat
+        const randomPrice =
+          800 + 100 * Math.floor(((2000 - 800) / 100) * Math.random());
+        await connection.execute(
+          `INSERT INTO Seat (train_id, type, price) VALUES (?, ?, ?)`,
+          [train_id, "Standard", randomPrice]
+        );
+
+        const premiumPrice = randomPrice + 200;
+
+        await connection.execute(
+          `INSERT INTO Seat (train_id, type, price) VALUES (?, ?, ?)`,
+          [train_id, "Premium", premiumPrice]
+        );
+      }
+
+      [seats] = await connection.execute(
+        `SELECT * FROM Seat WHERE train_id = ?`,
+        [train_id]
+      );
+
+      // get all the stations between source and destination from the schedule using train_id
+      const [stations] = await connection.execute(
+        `SELECT 
+    s1.station_name AS from_station_name,
+    s1.city AS from_city,
+    s2.station_name AS at_station_name,
+    s2.city AS at_city,
+    s3.station_name AS to_station_name,
+    s3.city AS to_city,
+    sc.arrival_time,
+    sc.departure_time
+FROM 
+    Schedule sc
+LEFT JOIN 
+    Station s1 ON sc.from_station_id = s1.station_id
+LEFT JOIN 
+    Station s2 ON sc.station_id = s2.station_id
+LEFT JOIN 
+    Station s3 ON sc.to_station_id = s3.station_id
+WHERE 
+    sc.train_id = ?
+ORDER BY 
+    sc.arrival_time;`,
+        [train_id]
+      );
+
+      return res.status(200).json({
+        results,
+        stations,
+        seats,
+        info: {
+          source,
+          destination,
+          date,
+        },
+      });
+    }
+
+    return res.status(404).json({
+      error: "No trains found between the given stations",
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred during the checkout process" });
+  }
+});
+
+app.post("/bookTicket", authenticateToken, async (req, res) => {
+  const { seat, foodPreference } = req.body;
+  const email = req.user.email;
+
+  console.log(req.user, email, seat, foodPreference);
+
+  if (!seat || !foodPreference) {
+    return res
+      .status(400)
+      .json({ error: "Seat and food preference are required" });
+  }
+  try {
+    const query = `Select * from Seat where seat_id = ?`;
+
+    const [results] = await connection.execute(query, [seat]);
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        error: "Seat not found",
+      });
+    }
+
+    const seatDetails = results[0];
+
+    // Initialize razorpay object
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY,
+      key_secret: process.env.RAZORPAY_SECRET,
+    });
+
+    // Create an order -> generate the OrderID -> Send it to the Front-end
+    const payment_capture = 1;
+    const amount = parseInt(seatDetails.price);
+    const currency = "INR";
+    const options = {
+      amount: (amount * 100).toString(),
+      currency,
+      receipt: nanoid(),
+      payment_capture,
+      notes: {
+        foodPreference,
+        seat_id: seat,
+      },
+    };
+
+    const response = await razorpay.orders.create(options);
+    res.status(200).json({
+      id: response.id,
+      currency: response.currency,
+      amount: response.amount,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json(err);
+  }
+});
+
+app.post("/verifyPayment", authenticateToken, async (req, res) => {
+  try {
+    const { payment_id, order_id, razorpay_signature } = req.body;
+    const email = req.user.email;
+
+    const passengerQuery = `SELECT passenger_id FROM Passenger WHERE passenger_email = ?`;
+
+    const [passengerResults] = await connection.execute(passengerQuery, [
+      email,
+    ]);
+
+    if (passengerResults.length === 0) {
+      return res.status(404).json({
+        error: "Passenger not found",
+      });
+    }
+
+    const passenger_id = passengerResults[0].passenger_id;
+
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY,
+      key_secret: process.env.RAZORPAY_SECRET,
+    });
+
+    const generated_signature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_SECRET)
+      .update(order_id + "|" + payment_id)
+      .digest("hex");
+
+    if (generated_signature === razorpay_signature) {
+      console.log("Signature is valid");
+      // Signature is valid
+
+      const payment = await razorpay.payments.fetch(payment_id);
+
+      const { notes } = payment;
+
+      const { foodPreference, seat_id } = notes;
+
+      // add into payment table
+      const [paymentResults] = await connection.execute(
+        `INSERT INTO Payment (payment_id, status, price) VALUES (?, ?, ?)`,
+        [payment_id, "Completed", payment.amount]
+      );
+
+      const [results] = await connection.execute(
+        `INSERT INTO Ticket (seat_id, passenger_id, food_preference, payment_id, status)
+       VALUES (?, ?, ?, ?, 'Confirmed');`,
+        [parseInt(seat_id), passenger_id, foodPreference, payment_id]
+      );
+
+      const ticket_id = results.insertId;
+
+      // decrement the total_seats from Train
+
+      const [updateResults] = await connection.execute(
+        `UPDATE Train SET total_seats = total_seats - 1 WHERE train_id = (SELECT train_id FROM Seat WHERE seat_id = ?)`,
+        [seat_id]
+      );
+
+      console.log(updateResults);
+
+      if (updateResults.affectedRows > 0) {
+        console.log("Total seats updated successfully.");
+      } else {
+        console.log(
+          "No seats updated. Check if the seat_id exists and is linked to a valid train_id."
+        );
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Payment successful",
+        ticket_id,
+      });
+    } else {
+      return res.status(400).json({
+        error: "Invalid signature",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: "An error occurred during the payment verification process",
+    });
+  }
+});
+
+app.post("/getTicket", authenticateToken, async (req, res) => {
+  try {
+    const { ticket_id } = req.body;
+    const email = req.user.email;
+
+    const passengerQuery = `SELECT passenger_id FROM Passenger WHERE passenger_email = ?`;
+
+    const [passengerResults] = await connection.execute(passengerQuery, [
+      email,
+    ]);
+
+    if (passengerResults.length === 0) {
+      return res.status(404).json({
+        error: "Passenger not found",
+      });
+    }
+
+    const passenger_id = passengerResults[0].passenger_id;
+    const query = `
+SELECT 
+    Ticket.*,
+    Train.*,
+    Schedule.from_station_id,
+    Schedule.to_station_id,
+    Schedule.departure_time,
+    Schedule.arrival_time,
+    FromStation.station_name AS from_station_name,
+    FromStation.city AS from_station_city,
+    ToStation.station_name AS to_station_name,
+    ToStation.city AS to_station_city,
+    Seat.type,
+    Seat.price,
+    Passenger.passenger_id,
+    Passenger.passenger_name,
+    Passenger.passenger_email
+FROM 
+    Ticket
+INNER JOIN 
+    Seat ON Ticket.seat_id = Seat.seat_id
+INNER JOIN 
+    Train ON Seat.train_id = Train.train_id
+INNER JOIN 
+    Schedule ON Train.train_id = Schedule.train_id
+INNER JOIN 
+    Station FromStation ON Schedule.from_station_id = FromStation.station_id
+INNER JOIN 
+    Station ToStation ON Schedule.to_station_id = ToStation.station_id
+INNER JOIN
+    Passenger ON Ticket.passenger_id = Passenger.passenger_id
+WHERE 
+    Ticket.passenger_id = ? AND Ticket.ticket_id = ?
+`;
+
+    const [results] = await connection.execute(query, [
+      passenger_id,
+      ticket_id,
+    ]);
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        error: "Ticket not found",
+      });
+    }
+
+    return res.status(200).json({
+      results,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: "An error occurred during the ticket fetching process",
+    });
   }
 });
 

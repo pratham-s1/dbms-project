@@ -1,12 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Layout, Tabs, Form, Input, Button, Table } from "antd";
-import {
-  UserOutlined,
-  EditOutlined,
-  LockOutlined,
-  HistoryOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, LockOutlined, HistoryOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getTicket, search } from "@/app/services/table.service";
@@ -18,7 +13,6 @@ const { Content } = Layout;
 export default function Dashboard() {
   const router = useRouter();
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [data, setData] = useState([]);
   const columns = [
     {
@@ -27,9 +21,34 @@ export default function Dashboard() {
       key: "ticket_id",
     },
     {
-      title: "PaymentID",
-      dataIndex: "payment_id",
-      key: "payment_id",
+      title: "From",
+      dataIndex: "from_station_name",
+      key: "from_station_name",
+    },
+    {
+      title: "To",
+      dataIndex: "to_station_name",
+      key: "to_station_name",
+    },
+    {
+      title: "Train",
+      dataIndex: "train_name",
+      key: "train_name",
+    },
+    {
+      title: "Class",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Seat",
+      dataIndex: "seat_id",
+      key: "seat_id",
     },
     {
       title: "Status",
@@ -37,18 +56,6 @@ export default function Dashboard() {
       key: "status",
     },
   ];
-
-  const rowSelection = {
-    type: "radio",
-    selectedRowKeys,
-    onChange: (keys, rows) => {
-      setSelectedRowKeys(keys);
-    },
-    getCheckboxProps: (record) => ({
-      disabled: record.ticket_id === "Disabled User",
-      name: record.ticket_id,
-    }),
-  };
 
   const fetchServices = async () => {
     const res = await getTicket();
@@ -78,7 +85,7 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <Sider width={2000} style={{ background: "#fff" }}>
+      <Sider width={"100%"} style={{ background: "#fff" }}>
         <Tabs>
           <TabPane
             tab={
@@ -89,15 +96,36 @@ export default function Dashboard() {
             }
             key="travel_history"
           >
-            <Content style={{ padding: "" }}>
-              <Layout style={{ padding: "24px 0" }}>
-                <Content style={{ padding: "12px 24px", minHeight: 280 }}>
-                  <h1>Your Tickets</h1>
+            <Content style={{ padding: "", background: "#111" }}>
+              <Layout
+                style={{ padding: "24px 0", background: "#111", color: "#fff" }}
+              >
+                <Content
+                  style={{
+                    padding: "12px 24px",
+                    minHeight: 280,
+                    color: "#fff",
+                  }}
+                >
+                  <h1
+                    style={{
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    Your Tickets
+                  </h1>
                   <Table
-                    rowSelection={rowSelection}
                     dataSource={data}
                     columns={columns}
                     rowKey={"ticket_id"}
+                    rowHoverable
+                    onRow={(record, rowIndex) => {
+                      return {
+                        onClick: (event) => {
+                          router.push(`/ticket?ticket_id=${record.ticket_id}`);
+                        },
+                      };
+                    }}
                   />
                 </Content>
               </Layout>
