@@ -53,8 +53,8 @@ function authenticateToken(req, res, next) {
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.sendStatus(403); // if the token has expired or is invalid
+    user.isAdmin = user.isAdmin ?? false;
     req.user = user;
-    req.isAdmin = user.isAdmin ?? false;
     next();
   });
 }
@@ -237,7 +237,6 @@ app.post("/logout", async (req, res) => {
   res.clearCookie("token");
   return res.status(200).json({ success: true, message: "Logged out" });
 });
-
 
 app.get("/status", async (req, res) => {
   try {
@@ -874,6 +873,7 @@ app.post("/getTicket", authenticateToken, async (req, res) => {
   try {
     const { ticket_id } = req.body;
     const email = req.user.email;
+    const isAdmin = req.user.isAdmin ?? false;
 
     // Get the passenger_id from the Passenger table using the email
     const passengerQuery = `SELECT passenger_id FROM Passenger WHERE passenger_email = ?`;
@@ -889,8 +889,47 @@ app.post("/getTicket", authenticateToken, async (req, res) => {
 
     const passenger_id = passengerResults[0].passenger_id;
 
-    // Query to get the ticket details
-    const ticketQuery = `
+    let ticketQuery, ticketResults;
+
+    if (isAdmin) {
+      ticketQuery = `
+SELECT 
+    Ticket.ticket_id,
+    Ticket.status,
+    Ticket.created_at,
+    Train.train_name,
+    Train.train_id,
+    Train.status AS train_status,
+    Schedule.departure_time,
+    Schedule.arrival_time,
+    FromStation.station_name AS from_station_name,
+    FromStation.city AS from_station_city,
+    ToStation.station_name AS to_station_name,
+    ToStation.city AS to_station_city,
+    Seat.type AS seat_type,
+    Seat.price AS seat_price
+FROM 
+    Ticket
+INNER JOIN 
+    TravellerTickets ON Ticket.ticket_id = TravellerTickets.ticket_id
+INNER JOIN 
+    Seat ON TravellerTickets.seat_id = Seat.seat_id
+INNER JOIN 
+    Train ON Seat.train_id = Train.train_id
+INNER JOIN 
+    Schedule ON Train.train_id = Schedule.train_id
+INNER JOIN 
+    Station AS FromStation ON Schedule.from_station_id = FromStation.station_id
+INNER JOIN 
+    Station AS ToStation ON Schedule.to_station_id = ToStation.station_id
+WHERE 
+    Ticket.ticket_id = ?;
+    `;
+
+      [ticketResults] = await connection.execute(ticketQuery, [ticket_id]);
+    } else {
+      // Query to get the ticket details
+      ticketQuery = `
 SELECT 
     Ticket.ticket_id,
     Ticket.status,
@@ -924,10 +963,11 @@ WHERE
     Ticket.ticket_id = ? AND Ticket.passenger_id = ?;
 `;
 
-    const [ticketResults] = await connection.execute(ticketQuery, [
-      ticket_id,
-      passenger_id,
-    ]);
+      [ticketResults] = await connection.execute(ticketQuery, [
+        ticket_id,
+        passenger_id,
+      ]);
+    }
 
     if (ticketResults.length === 0) {
       return res.status(404).json({

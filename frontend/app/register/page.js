@@ -28,7 +28,7 @@ export default function Register() {
         message: "Success",
         description: "User registered successfully",
       });
-      router.push("/login");
+      router.push("/");
     } catch (error) {
       notification.error({
         message: "Error",
@@ -168,6 +168,7 @@ export default function Register() {
                         const eighteenYearsAgo = dayjs().subtract(18, "years");
                         return current.isAfter(eighteenYearsAgo, "day");
                       }}
+                      defaultValue={dayjs().subtract(18, "years")}
                     />
                   </Form.Item>
 

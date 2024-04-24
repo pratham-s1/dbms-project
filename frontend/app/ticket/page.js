@@ -113,7 +113,7 @@ export default function BoardingPass() {
 
             <Divider />
 
-            {travellers?.length > 1 &&
+            {travellers?.length > 0 &&
               travellers.map((traveller, index) => (
                 <>
                   <Row gutter={[16, 16]} style={{ marginBottom: "20px" }}>

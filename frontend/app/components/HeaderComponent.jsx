@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 import { Layout, Menu, notification } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -154,6 +154,13 @@ export default function HeaderComponent() {
       ];
     }
   };
+
+  useEffect(() => {
+    if (user?.isLoggedIn && path === "/") {
+      console.log("logged in");
+      router.push("/search");
+    }
+  }, [user, path]);
 
   return (
     <>
