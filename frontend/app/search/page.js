@@ -17,6 +17,8 @@ const { Content } = Layout;
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import Loader from "../components/Loader";
+import dayjs from "dayjs";
+import moment from "moment";
 
 export default function Login() {
   const user = useSelector((state) => state.user);
@@ -114,6 +116,16 @@ export default function Login() {
             type="primary"
             style={{ marginTop: "16px", width: "100%" }} // Full width button
             onClick={() => {
+              if (!user?.isLoggedIn) {
+                notification.error({
+                  message: "Login before booking!",
+                  description: "Redirecting to login page",
+                });
+
+                router.push("/");
+                return;
+              }
+
               router.push(
                 `/checkout?train_id=${item.train_id}&date=${searchData.date}&source=${searchData.source}&destination=${searchData.destination}`
               );
@@ -215,6 +227,8 @@ export default function Login() {
                     style={{
                       width: "200px",
                     }}
+                    placeholder="Select Date"
+                    minDate={dayjs(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")}
                   />
                 </Form.Item>
 

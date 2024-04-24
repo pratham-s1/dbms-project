@@ -15,6 +15,7 @@ const { Title, Text } = Typography;
 export default function BoardingPass() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [travellers, setTravellers] = useState([]); // Update this with the data you get from the API
   const [ticketData, setTicketData] = useState([]);
   const ticket_id = searchParams.get("ticket_id");
 
@@ -22,7 +23,8 @@ export default function BoardingPass() {
     const res = await getTicketInfo({
       ticket_id,
     });
-    setTicketData(res?.results[0]);
+    setTicketData(res?.ticketDetails);
+    setTravellers(res?.travelers);
   };
 
   const { isLoading } = useQuery({
@@ -110,29 +112,34 @@ export default function BoardingPass() {
             </Row>
 
             <Divider />
-            <Row gutter={[16, 16]} style={{ marginBottom: "20px" }}>
-              <Col span={12}>
-                <Text strong>Passenger:</Text>
-              </Col>
-              <Col span={12}>
-                <Text>
-                  {ticketData.passenger_name} ({ticketData.passenger_email})
-                </Text>{" "}
-                {/* Update this if you have passenger name data */}
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]} style={{ marginBottom: "20px" }}>
-              <Col span={12}>
-                <Text strong>Seat:</Text>
-              </Col>
-              <Col span={12}>
-                <Text>
-                  Seat: {ticketData.seat_id} - <b>{ticketData.type}</b>
-                </Text>{" "}
-                {/* Update this if you have dynamic seat data */}
-              </Col>
-            </Row>
-            <Divider />
+
+            {travellers?.length > 1 &&
+              travellers.map((traveller, index) => (
+                <>
+                  <Row gutter={[16, 16]} style={{ marginBottom: "20px" }}>
+                    <Col span={12}>
+                      <Text strong>Passenger:</Text>
+                    </Col>
+                    <Col span={12}>
+                      <Text>
+                        {traveller.traveller_name} ({traveller.traveller_email}{" "}
+                        | Age: {traveller.traveller_age})
+                      </Text>{" "}
+                      {/* Update this if you have passenger name data */}
+                    </Col>
+                  </Row>
+                  <Row gutter={[16, 16]} style={{ marginBottom: "20px" }}>
+                    <Col span={12}>
+                      <Text strong>Seat:</Text>
+                    </Col>
+                    <Col span={12}>
+                      <Text>Seat: {traveller.seat_id}</Text>{" "}
+                      {/* Update this if you have dynamic seat data */}
+                    </Col>
+                  </Row>
+                  <Divider />
+                </>
+              ))}
             <Row gutter={[16, 16]} style={{ marginBottom: "20px" }}>
               <Col span={24}>
                 <Text strong>

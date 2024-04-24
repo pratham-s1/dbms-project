@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import { getRevenue } from "../services/table.service";
 import { Layout } from "antd";
+import moment from "moment";
 const { Content } = Layout;
 
 export default function RevenueGraph() {
@@ -48,7 +49,11 @@ export default function RevenueGraph() {
             </h1>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
-                data={data?.results}
+                data={data?.results?.map((item) => ({
+                  ...item,
+                  revenue: parseInt(item.price) / 100,
+                  created_at: moment(item.created_at).format("ll HH:mm"),
+                }))}
                 margin={{
                   top: 20,
                   right: 30,
@@ -68,7 +73,7 @@ export default function RevenueGraph() {
                 <Tooltip />
                 <Area
                   type="monotone"
-                  dataKey="price"
+                  dataKey="revenue"
                   stroke="#8884d8"
                   fillOpacity={1}
                   fill="url(#colorRevenue)"

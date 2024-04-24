@@ -48,7 +48,7 @@ export const search = async (data) => {
 export const getTicket = async (data) => {
   const res = await apiClient.get(`${BASE_URL}/tickets`);
   console.log(res.data);
-  return res.data?.results;
+  return res.data?.tickets;
 };
 
 export const getStations = async (data) => {

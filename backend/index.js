@@ -499,8 +499,8 @@ app.get("/tickets", authenticateToken, async (req, res) => {
   try {
     const email = req.user.email;
 
+    // Fetch the passenger_id using the email
     const passengerQuery = `SELECT passenger_id FROM Passenger WHERE passenger_email = ?`;
-
     const [passengerResults] = await connection.execute(passengerQuery, [
       email,
     ]);
@@ -513,44 +513,56 @@ app.get("/tickets", authenticateToken, async (req, res) => {
 
     const passenger_id = passengerResults[0].passenger_id;
 
+    // Modified query to fetch distinct tickets with associated train and schedule info
     const query = `
-SELECT
-    Ticket.*,
-    Train.*,
-    Schedule.from_station_id,
-    Schedule.to_station_id,
+SELECT DISTINCT
+    Ticket.ticket_id,
+    Ticket.created_at,
+    Ticket.status,
+    Train.train_id,
+    Train.train_name,
+    Train.status AS train_status,
     Schedule.departure_time,
     Schedule.arrival_time,
     FromStation.station_name AS from_station_name,
     FromStation.city AS from_station_city,
     ToStation.station_name AS to_station_name,
-    ToStation.city AS to_station_city,
-    Seat.type,
-    Seat.price
+    ToStation.city AS to_station_city
 FROM
     Ticket
 INNER JOIN
-    Seat ON Ticket.seat_id = Seat.seat_id
+    TravellerTickets ON Ticket.ticket_id = TravellerTickets.ticket_id
+INNER JOIN
+    Seat ON TravellerTickets.seat_id = Seat.seat_id
 INNER JOIN
     Train ON Seat.train_id = Train.train_id
 INNER JOIN
     Schedule ON Train.train_id = Schedule.train_id
 INNER JOIN
-    Station FromStation ON Schedule.from_station_id = FromStation.station_id
+    Station AS FromStation ON Train.source_id = FromStation.station_id
 INNER JOIN
-    Station ToStation ON Schedule.to_station_id = ToStation.station_id
+    Station AS ToStation ON Train.destination_id = ToStation.station_id
 WHERE
     Ticket.passenger_id = ?;
 `;
 
     const [results] = await connection.execute(query, [passenger_id]);
 
-    return res.status(200).json({ results });
+    if (results.length === 0) {
+      return res.status(404).json({
+        error: "No tickets found for this passenger.",
+      });
+    }
+
+    return res.status(200).json({
+      tickets: results,
+    });
   } catch (error) {
     console.log(error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred during the ticket process" });
+    return res.status(500).json({
+      error: "An error occurred during the ticket fetching process",
+      details: error.message,
+    });
   }
 });
 
@@ -667,67 +679,14 @@ ORDER BY
 });
 
 app.post("/bookTicket", authenticateToken, async (req, res) => {
-  const { seat, foodPreference } = req.body;
+  const { passengers } = req.body;
   const email = req.user.email;
 
-  console.log(req.user, email, seat, foodPreference);
-
-  if (!seat || !foodPreference) {
-    return res
-      .status(400)
-      .json({ error: "Seat and food preference are required" });
+  if (!passengers || !Array.isArray(passengers) || passengers.length === 0) {
+    return res.status(400).json({ error: "Passenger details are required" });
   }
+
   try {
-    const query = `Select * from Seat where seat_id = ?`;
-
-    const [results] = await connection.execute(query, [seat]);
-
-    if (results.length === 0) {
-      return res.status(404).json({
-        error: "Seat not found",
-      });
-    }
-
-    const seatDetails = results[0];
-
-    // Initialize razorpay object
-    const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY,
-      key_secret: process.env.RAZORPAY_SECRET,
-    });
-
-    // Create an order -> generate the OrderID -> Send it to the Front-end
-    const payment_capture = 1;
-    const amount = parseInt(seatDetails.price);
-    const currency = "INR";
-    const options = {
-      amount: (amount * 100).toString(),
-      currency,
-      receipt: nanoid(),
-      payment_capture,
-      notes: {
-        foodPreference,
-        seat_id: seat,
-      },
-    };
-
-    const response = await razorpay.orders.create(options);
-    res.status(200).json({
-      id: response.id,
-      currency: response.currency,
-      amount: response.amount,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(400).json(err);
-  }
-});
-
-app.post("/verifyPayment", authenticateToken, async (req, res) => {
-  try {
-    const { payment_id, order_id, razorpay_signature } = req.body;
-    const email = req.user.email;
-
     const passengerQuery = `SELECT passenger_id FROM Passenger WHERE passenger_email = ?`;
 
     const [passengerResults] = await connection.execute(passengerQuery, [
@@ -742,71 +701,171 @@ app.post("/verifyPayment", authenticateToken, async (req, res) => {
 
     const passenger_id = passengerResults[0].passenger_id;
 
+    const seatIds = passengers.map((passenger) => passenger.seat);
+    console.log("Seat IDs:", seatIds); // Check what's being sent to the query
+
+    const placeholders = seatIds.map(() => "?").join(","); // Create placeholders for each seat id
+    const seatQuery = `SELECT * FROM Seat WHERE seat_id IN (${placeholders})`;
+    const [seatResults] = await connection.execute(seatQuery, seatIds);
+
+    console.log("Seat Results:", seatResults); // Check what comes back from the database
+
+    const seatsById = seatResults.reduce((acc, seat) => {
+      acc[seat.seat_id] = seat;
+      return acc;
+    }, {});
+
+    const totalAmount = passengers.reduce(
+      (acc, passenger) => acc + parseInt(seatsById[passenger.seat].price),
+      0
+    );
+
+    console.log("Total Amount:", totalAmount); // Check the total amount
+
+    const options = {
+      amount: (totalAmount * 100).toString(),
+      currency: "INR",
+      receipt: nanoid(),
+      payment_capture: 1,
+    };
+
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY,
       key_secret: process.env.RAZORPAY_SECRET,
     });
 
+    const paymentResponse = await razorpay.orders.create(options);
+
+    // insert into payment table
+    const [paymentResult] = await connection.execute(
+      `INSERT INTO Payment (payment_id, price, status) VALUES (?, ?, 'Pending')`,
+      [paymentResponse.id, totalAmount]
+    );
+
+    // Assuming payment is initiated successfully, create a single ticket for all passengers
+    const [ticketResult] = await connection.execute(
+      `INSERT INTO Ticket (passenger_id, payment_id, status) VALUES (?, ?, 'Pending')`,
+      [passenger_id, paymentResponse.id]
+    );
+
+    const ticketId = ticketResult.insertId;
+
+    // Insert each passenger into TravellerTickets table
+    await Promise.all(
+      passengers.map(async (passenger) => {
+        console.log("Passenger:", passenger); // Check the passenger details
+
+        const [travellerResult] = await connection.execute(
+          `INSERT INTO Traveller (passenger_id, traveller_name, traveller_email, traveller_phone, traveller_age
+          ) VALUES (?, ?, ?, ?, ?)`,
+          [
+            passenger_id,
+            passenger.travellerName,
+            passenger.travellerEmail,
+            passenger.travellerPhone,
+            parseInt(passenger.travellerAge),
+          ]
+        );
+
+        const travellerId = travellerResult.insertId;
+
+        console.log("Traveller ID:", travellerId); // Check the traveller ID
+
+        const [travellerTicketResult] = await connection.execute(
+          `INSERT INTO TravellerTickets (ticket_id, traveller_id, seat_id, food_preference) VALUES (?, ?, ?, ?)`,
+          [ticketId, travellerId, passenger.seat, passenger.foodPreference]
+        );
+      })
+    );
+
+    res.status(200).json({
+      message: "Ticket booked successfully",
+      ticketId: ticketId,
+      paymentId: paymentResponse.id,
+      amount: totalAmount,
+      id: paymentResponse.id,
+      currency: "INR",
+      receipt: paymentResponse.receipt,
+    });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ error: "Failed to book tickets", details: err.message });
+  }
+});
+
+app.post("/verifyPayment", authenticateToken, async (req, res) => {
+  const { payment_id, order_id, razorpay_signature } = req.body;
+
+  try {
+    // Fetch the payment details from Razorpay
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY,
+      key_secret: process.env.RAZORPAY_SECRET,
+    });
+
+    // Validate the payment signature
     const generated_signature = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET)
       .update(order_id + "|" + payment_id)
       .digest("hex");
 
-    if (generated_signature === razorpay_signature) {
-      console.log("Signature is valid");
-      // Signature is valid
-
-      const payment = await razorpay.payments.fetch(payment_id);
-
-      const { notes } = payment;
-
-      const { foodPreference, seat_id } = notes;
-
-      // add into payment table
-      const [paymentResults] = await connection.execute(
-        `INSERT INTO Payment (payment_id, status, price) VALUES (?, ?, ?)`,
-        [payment_id, "Completed", payment.amount]
-      );
-
-      const [results] = await connection.execute(
-        `INSERT INTO Ticket (seat_id, passenger_id, food_preference, payment_id, status)
-       VALUES (?, ?, ?, ?, 'Confirmed');`,
-        [parseInt(seat_id), passenger_id, foodPreference, payment_id]
-      );
-
-      const ticket_id = results.insertId;
-
-      // decrement the total_seats from Train
-
-      const [updateResults] = await connection.execute(
-        `UPDATE Train SET total_seats = total_seats - 1 WHERE train_id = (SELECT train_id FROM Seat WHERE seat_id = ?)`,
-        [seat_id]
-      );
-
-      console.log(updateResults);
-
-      if (updateResults.affectedRows > 0) {
-        console.log("Total seats updated successfully.");
-      } else {
-        console.log(
-          "No seats updated. Check if the seat_id exists and is linked to a valid train_id."
-        );
-      }
-
-      return res.status(200).json({
-        success: true,
-        message: "Payment successful",
-        ticket_id,
-      });
-    } else {
+    if (generated_signature !== razorpay_signature) {
       return res.status(400).json({
-        error: "Invalid signature",
+        error: "Invalid payment signature.",
       });
     }
+
+    // Retrieve the payment from Razorpay to verify its status
+    const payment = await razorpay.payments.fetch(payment_id);
+
+    if (payment.status !== "captured") {
+      return res.status(400).json({
+        error: "Payment verification failed or the payment is not captured.",
+      });
+    }
+
+    console.log("Payment details:", payment_id);
+
+    // Assuming the payment is successful, update the payment table and ticket status
+    await connection.execute(
+      `UPDATE Payment SET status = ? WHERE payment_id = ?`,
+      ["Completed", order_id]
+    );
+
+    await connection.execute(
+      `UPDATE Ticket SET status = 'Confirmed' WHERE payment_id = ?`,
+      [order_id]
+    );
+
+    const [ticketResults] = await connection.execute(
+      `SELECT * FROM Ticket WHERE payment_id = ?`,
+      [order_id]
+    );
+
+    console.log("Ticket details:", ticketResults);
+
+    if (ticketResults.length === 0) {
+      return res.status(404).json({
+        error: "Ticket not found",
+      });
+    }
+
+    const ticketId = ticketResults[0].ticket_id;
+
+    // Optionally, add any additional business logic here, e.g., sending confirmation emails, etc.
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment successful and ticket confirmed.",
+      ticketId, // Assuming the ticket ID was stored in payment notes
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       error: "An error occurred during the payment verification process",
+      details: error.message,
     });
   }
 });
@@ -816,8 +875,8 @@ app.post("/getTicket", authenticateToken, async (req, res) => {
     const { ticket_id } = req.body;
     const email = req.user.email;
 
+    // Get the passenger_id from the Passenger table using the email
     const passengerQuery = `SELECT passenger_id FROM Passenger WHERE passenger_email = ?`;
-
     const [passengerResults] = await connection.execute(passengerQuery, [
       email,
     ]);
@@ -829,59 +888,84 @@ app.post("/getTicket", authenticateToken, async (req, res) => {
     }
 
     const passenger_id = passengerResults[0].passenger_id;
-    const query = `
+
+    // Query to get the ticket details
+    const ticketQuery = `
 SELECT 
-    Ticket.*,
-    Train.*,
-    Schedule.from_station_id,
-    Schedule.to_station_id,
+    Ticket.ticket_id,
+    Ticket.status,
+    Ticket.created_at,
+    Train.train_name,
+    Train.train_id,
+    Train.status AS train_status,
     Schedule.departure_time,
     Schedule.arrival_time,
     FromStation.station_name AS from_station_name,
     FromStation.city AS from_station_city,
     ToStation.station_name AS to_station_name,
     ToStation.city AS to_station_city,
-    Seat.type,
-    Seat.price,
-    Passenger.passenger_id,
-    Passenger.passenger_name,
-    Passenger.passenger_email
+    Seat.type AS seat_type,
+    Seat.price AS seat_price
 FROM 
     Ticket
 INNER JOIN 
-    Seat ON Ticket.seat_id = Seat.seat_id
+    TravellerTickets ON Ticket.ticket_id = TravellerTickets.ticket_id
+INNER JOIN 
+    Seat ON TravellerTickets.seat_id = Seat.seat_id
 INNER JOIN 
     Train ON Seat.train_id = Train.train_id
 INNER JOIN 
     Schedule ON Train.train_id = Schedule.train_id
 INNER JOIN 
-    Station FromStation ON Schedule.from_station_id = FromStation.station_id
+    Station AS FromStation ON Schedule.from_station_id = FromStation.station_id
 INNER JOIN 
-    Station ToStation ON Schedule.to_station_id = ToStation.station_id
-INNER JOIN
-    Passenger ON Ticket.passenger_id = Passenger.passenger_id
+    Station AS ToStation ON Schedule.to_station_id = ToStation.station_id
 WHERE 
-    Ticket.passenger_id = ? AND Ticket.ticket_id = ?
+    Ticket.ticket_id = ? AND Ticket.passenger_id = ?;
 `;
 
-    const [results] = await connection.execute(query, [
-      passenger_id,
+    const [ticketResults] = await connection.execute(ticketQuery, [
       ticket_id,
+      passenger_id,
     ]);
 
-    if (results.length === 0) {
+    if (ticketResults.length === 0) {
       return res.status(404).json({
         error: "Ticket not found",
       });
     }
 
+    // Query to get all travelers associated with this ticket
+    const travelersQuery = `
+SELECT
+    Traveller.traveller_id,
+    Traveller.traveller_name,
+    Traveller.traveller_email,
+    Traveller.traveller_phone,
+    Traveller.traveller_age,
+    TravellerTickets.food_preference,
+    TravellerTickets.seat_id
+FROM
+    TravellerTickets
+INNER JOIN
+    Traveller ON TravellerTickets.traveller_id = Traveller.traveller_id
+WHERE
+    TravellerTickets.ticket_id = ?;
+`;
+
+    const [travelersResults] = await connection.execute(travelersQuery, [
+      ticket_id,
+    ]);
+
     return res.status(200).json({
-      results,
+      ticketDetails: ticketResults[0], // Send the first result as the main ticket details
+      travelers: travelersResults, // All associated travelers
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       error: "An error occurred during the ticket fetching process",
+      details: error.message,
     });
   }
 });

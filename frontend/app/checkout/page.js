@@ -6,13 +6,26 @@ import {
   verifyPayment,
 } from "@/app/services/table.service";
 import { useState } from "react";
-import { Button, Card, Form, Layout, notification, Radio, Select } from "antd";
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  Layout,
+  notification,
+  Radio,
+  Select,
+  Space,
+} from "antd";
 const { Content } = Layout;
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import moment from "moment";
+import { PlusOutlined } from "@ant-design/icons";
 
 export default function Checkout() {
+  const router = useRouter();
+  const [form] = Form.useForm();
   const searchParams = useSearchParams();
 
   const train_id = searchParams.get("train_id");
@@ -52,10 +65,9 @@ export default function Checkout() {
       return;
     }
 
-    const { seat, foodPreference } = values;
+    const { passengers } = values;
     const bookticketRes = await bookTicket({
-      seat,
-      foodPreference,
+      passengers,
     });
 
     const data = bookticketRes;
@@ -83,8 +95,10 @@ export default function Checkout() {
 
         notification.success({
           message: "Success",
-          description: "Payment Successful: " + res.ticket_id,
+          description: "Payment Successful: " + res.ticketId,
         });
+
+        router.push("/ticket?ticket_id=" + res.ticketId);
         // Validate payment at server - using webhooks is a better idea.
         // alert(response.razorpay_payment_id);
         // alert(response.razorpay_order_id);
@@ -116,19 +130,6 @@ export default function Checkout() {
     queryKey: ["fetch-trian"],
     queryFn: fetchServices,
   });
-
-  const handleSubmit = async (values) => {
-    console.log(values);
-    const { seat, foodPreference } = values;
-    try {
-      await bookTicketMutation.mutateAsync({
-        seat,
-        foodPreference,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   console.log({ checkoutData });
 
@@ -230,82 +231,160 @@ export default function Checkout() {
         >
           Available Seats
         </h2>
-        {checkoutData &&
-          checkoutData?.seats?.map((item, idx) => (
-            <Card
-              title="Seat Details"
-              bordered={false}
-              key={idx}
-              style={{
-                margin: "20px 0",
-              }}
-            >
-              <p>
-                <strong>Seat Number:</strong> {item.seat_id}
-              </p>
-              <p>
-                <strong>Seat Type:</strong> {item.type}
-              </p>
-              <p>
-                <strong>Seat Price:</strong> Rs. {item.price}
-              </p>
-            </Card>
-          ))}
-        <Form
-          layout="vertical"
-          onFinish={makePayment}
+
+        <div
           style={{
-            marginTop: 20,
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 20,
           }}
         >
-          <Form.Item
-            label={<b style={{ color: "#fff" }}>Seat</b>}
-            name="seat"
-            rules={[{ required: true, message: "Please choose a seat" }]}
-          >
-            <Select
-              placeholder="Select a seat"
-              options={checkoutData?.seats?.map((item) => ({
-                value: item.seat_id,
-                label: `${item.type} Seat - Rs. ${item.price}`,
-              }))}
-            />
-          </Form.Item>
+          {checkoutData &&
+            checkoutData?.seats?.map((item, idx) => (
+              <Card
+                title={`${item.type} Seat`}
+                bordered={false}
+                key={idx}
+                style={{
+                  margin: "20px 0",
+                  maxWidth: 300,
+                }}
+              >
+                <p>
+                  <strong>Seat Number:</strong> {item.seat_id}
+                </p>
+                <p>
+                  <strong>Seat Type:</strong> {item.type}
+                </p>
+                <p>
+                  <strong>Seat Price:</strong> Rs. {item.price}
+                </p>
+              </Card>
+            ))}
+        </div>
+        <Form form={form} layout="vertical" onFinish={makePayment}>
+          <Form.List name="passengers">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map((field, index) => (
+                  <Space
+                    key={field.key}
+                    style={{ display: "flex", marginBottom: 8 }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      {...field}
+                      label="Traveller Name"
+                      name={[field.name, "travellerName"]}
+                      fieldKey={[field.fieldKey, "travellerName"]}
+                      rules={[{ required: true, message: "Missing name" }]}
+                    >
+                      <Input placeholder="Enter name" />
+                    </Form.Item>
+                    <Form.Item
+                      {...field}
+                      label="Traveller Email"
+                      name={[field.name, "travellerEmail"]}
+                      fieldKey={[field.fieldKey, "travellerEmail"]}
+                      rules={[
+                        {
+                          type: "email",
+                          message: "Enter a valid email!",
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <Input placeholder="Enter email" />
+                    </Form.Item>
+                    <Form.Item
+                      {...field}
+                      label="Traveller Age"
+                      name={[field.name, "travellerAge"]}
+                      fieldKey={[field.fieldKey, "travellerAge"]}
+                      rules={[
+                        { required: true, message: "Missing age" },
+                        {
+                          min: 1,
+                        },
+                      ]}
+                    >
+                      <Input placeholder="Enter age" type="number" />
+                    </Form.Item>
+                    <Form.Item
+                      {...field}
+                      label="Traveller Phone"
+                      name={[field.name, "travellerPhone"]}
+                      fieldKey={[field.fieldKey, "travellerPhone"]}
+                      rules={[{ required: true, message: "Missing phone" }]}
+                    >
+                      <Input placeholder="Enter phone number" />
+                    </Form.Item>
+                    <Form.Item
+                      {...field}
+                      label="Food Preference"
+                      name={[field.name, "foodPreference"]}
+                      fieldKey={[field.fieldKey, "foodPreference"]}
+                      rules={[
+                        { required: true, message: "Missing food preference" },
+                      ]}
+                    >
+                      {/* <Radio.Group>
+                        <Radio value="vegetarian">Vegetarian</Radio>
+                        <Radio value="non-vegetarian">Non-Vegetarian</Radio>
+                        <Radio value="vegan">Vegan</Radio>
+                      </Radio.Group> */}
 
-          <Form.Item
-            label={<b style={{ color: "#fff" }}>Food Preference</b>}
-            name="foodPreference"
-          >
-            <Radio.Group>
-              <Radio
-                value="vegetarian"
-                style={{
-                  color: "#fff",
-                }}
-              >
-                Vegetarian
-              </Radio>
-              <Radio
-                value="non-vegetarian"
-                style={{
-                  color: "#fff",
-                }}
-              >
-                Non-Vegetarian
-              </Radio>
-              <Radio
-                value="vegan"
-                style={{
-                  color: "#fff",
-                }}
-              >
-                Vegan
-              </Radio>
-            </Radio.Group>
-          </Form.Item>
+                      <Select placeholder="Select food preference">
+                        <Select.Option value="vegetarian">
+                          Vegetarian
+                        </Select.Option>
+                        <Select.Option value="non-vegetarian">
+                          Non-Vegetarian
+                        </Select.Option>
+                        <Select.Option value="vegan">Vegan</Select.Option>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      {...field}
+                      label="Seat"
+                      name={[field.name, "seat"]}
+                      fieldKey={[field.fieldKey, "seat"]}
+                      rules={[
+                        { required: true, message: "Please choose a seat" },
+                      ]}
+                    >
+                      <Select placeholder="Select a seat">
+                        {checkoutData?.seats?.map((item, key) => (
+                          <Select.Option value={item.seat_id} key={key}>
+                            {item.type} - Rs. {item.price}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Button
+                      onClick={() => remove(field.name)}
+                      style={{ marginLeft: "20px", backgroundColor: "#ff4d4f" }}
+                    >
+                      Remove
+                    </Button>
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Add Passenger
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Proceed to Payment
+              Submit
             </Button>
           </Form.Item>
         </Form>

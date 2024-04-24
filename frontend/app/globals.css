@@ -71,3 +71,14 @@ a {
   height: 2px;
   background: white !important;
 }
+
+.ant-pagination-item, .ant-pagination-item-link{
+  background-color: #fff !important;
+}
+.ant-pagination-item-ellipsis{
+  color: #fff !important;
+}
+
+.ant-form-item-required, .ant-radio-wrapper-in-form-item{
+  color: #fff !important;
+}

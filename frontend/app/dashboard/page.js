@@ -21,14 +21,24 @@ export default function Dashboard() {
       key: "ticket_id",
     },
     {
-      title: "From",
+      title: "From Station",
       dataIndex: "from_station_name",
       key: "from_station_name",
     },
     {
-      title: "To",
+      title: "From City",
+      dataIndex: "from_station_city",
+      key: "from_station_city",
+    },
+    {
+      title: "To Station",
       dataIndex: "to_station_name",
       key: "to_station_name",
+    },
+    {
+      title: "To City",
+      dataIndex: "to_station_city",
+      key: "to_station_city",
     },
     {
       title: "Train",
@@ -36,24 +46,24 @@ export default function Dashboard() {
       key: "train_name",
     },
     {
-      title: "Class",
-      dataIndex: "type",
-      key: "type",
+      title: "Departure Time",
+      dataIndex: "departure_time",
+      key: "departure_time",
     },
     {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "Seat",
-      dataIndex: "seat_id",
-      key: "seat_id",
+      title: "Arrival Time",
+      dataIndex: "arrival_time",
+      key: "arrival_time",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+    },
+    {
+      title: "Train Status",
+      dataIndex: "train_status",
+      key: "train_status",
     },
   ];
 
@@ -130,17 +140,6 @@ export default function Dashboard() {
                 </Content>
               </Layout>
             </Content>
-          </TabPane>
-          <TabPane
-            tab={
-              <span>
-                <EditOutlined style={{ marginRight: 8 }} />
-                Edit Profile
-              </span>
-            }
-            key="edit_account"
-          >
-            Edit Profile
           </TabPane>
           <TabPane
             tab={

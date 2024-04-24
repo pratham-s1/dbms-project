@@ -10,6 +10,7 @@ import {
   SearchOutlined,
   BookOutlined,
   LogoutOutlined,
+  StockOutlined,
 } from "@ant-design/icons";
 import { logout } from "../services/table.service";
 import { clearUser } from "../store/user.slice";
@@ -34,6 +35,8 @@ export default function HeaderComponent() {
       return "4";
     } else if (path === "/dashboard") {
       return "5";
+    } else if (path === "/revenue") {
+      return "7";
     } else if (path === "/") {
       return "0";
     }
@@ -55,6 +58,14 @@ export default function HeaderComponent() {
             key: "5",
             icon: <HomeOutlined />,
             label: "Admin Dashboard",
+            onClick: (e) => {
+              router.push("/admin");
+            },
+          },
+          {
+            key: "7",
+            icon: <StockOutlined />,
+            label: "Revenue",
             onClick: (e) => {
               router.push("/admin");
             },
