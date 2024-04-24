@@ -67,7 +67,7 @@ export default function HeaderComponent() {
             icon: <StockOutlined />,
             label: "Revenue",
             onClick: (e) => {
-              router.push("/admin");
+              router.push("/revenue");
             },
           },
           {

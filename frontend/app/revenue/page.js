@@ -45,13 +45,13 @@ export default function RevenueGraph() {
               }}
             >
               Completed Payments Revenue (Total Revenue: Rs.{" "}
-              {parseInt(data?.totalRevenue) / 100} )
+              {parseInt(data?.totalRevenue)} )
             </h1>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={data?.results?.map((item) => ({
                   ...item,
-                  revenue: parseInt(item.price) / 100,
+                  revenue: parseInt(item.price),
                   created_at: moment(item.created_at).format("ll HH:mm"),
                 }))}
                 margin={{
